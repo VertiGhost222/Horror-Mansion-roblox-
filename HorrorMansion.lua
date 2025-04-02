@@ -7,6 +7,15 @@ local Workspace = game:GetService("Workspace")
 local Lighting = game:GetService("Lighting")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+
+-- Création de l'événement pour le faux monstre
+local monsterSpawnEvent = ReplicatedStorage:FindFirstChild("FakeMonsterSpawnEvent")
+if not monsterSpawnEvent then
+    monsterSpawnEvent = Instance.new("RemoteEvent")
+    monsterSpawnEvent.Name = "FakeMonsterSpawnEvent"
+    monsterSpawnEvent.Parent = ReplicatedStorage
+end
 
 local speedBoostActive = false
 local defaultSpeed = 16
@@ -15,6 +24,7 @@ local savedPosition = nil
 local noClipActive = false
 local noClipConnection
 local spinning = false
+local monsterActive = false
 
 LocalPlayer.CharacterAdded:Connect(function(char)
     Character = char
@@ -249,6 +259,19 @@ rsCorner.CornerRadius = UDim.new(0, 6)
 rsCorner.Parent = randomSpinButton
 randomSpinButton.Parent = cheatsContent
 
+local fakeMonsterSpawnButton = Instance.new("TextButton")
+fakeMonsterSpawnButton.Size = UDim2.new(1, -20, 0, 50)
+fakeMonsterSpawnButton.Position = UDim2.new(0, 10, 0, 230)
+fakeMonsterSpawnButton.Text = "Fake Monster Spawn"
+fakeMonsterSpawnButton.BackgroundColor3 = Color3.fromRGB(45, 45, 70)
+fakeMonsterSpawnButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+fakeMonsterSpawnButton.Font = Enum.Font.Gotham
+fakeMonsterSpawnButton.TextSize = 14
+local fmCorner = Instance.new("UICorner")
+fmCorner.CornerRadius = UDim.new(0, 6)
+fmCorner.Parent = fakeMonsterSpawnButton
+fakeMonsterSpawnButton.Parent = cheatsContent
+
 local savePositionButton = Instance.new("TextButton")
 savePositionButton.Size = UDim2.new(1, -20, 0, 50)
 savePositionButton.Position = UDim2.new(0, 10, 0, 10)
@@ -279,7 +302,7 @@ local creditsLabel1 = Instance.new("TextLabel")
 creditsLabel1.Size = UDim2.new(1, -20, 0, 40)
 creditsLabel1.Position = UDim2.new(0, 10, 0, 10)
 creditsLabel1.BackgroundTransparency = 1
-creditsLabel1.Text = "Created by VertiGhost"
+creditsLabel1.Text = "Créé par VertiGhost"
 creditsLabel1.TextColor3 = Color3.fromRGB(220, 220, 255)
 creditsLabel1.Font = Enum.Font.Gotham
 creditsLabel1.TextSize = 14
@@ -289,7 +312,7 @@ local creditsLabel2 = Instance.new("TextLabel")
 creditsLabel2.Size = UDim2.new(1, -20, 0, 40)
 creditsLabel2.Position = UDim2.new(0, 10, 0, 50)
 creditsLabel2.BackgroundTransparency = 1
-creditsLabel2.Text = "Version: 1.0 - 02/04/2025"
+creditsLabel2.Text = "Version : 1.0 - 04/02/2025" -- Format américain MM/DD/YYYY
 creditsLabel2.TextColor3 = Color3.fromRGB(220, 220, 255)
 creditsLabel2.Font = Enum.Font.Gotham
 creditsLabel2.TextSize = 14
@@ -299,7 +322,7 @@ local creditsLabel3 = Instance.new("TextLabel")
 creditsLabel3.Size = UDim2.new(1, -20, 0, 40)
 creditsLabel3.Position = UDim2.new(0, 10, 0, 90)
 creditsLabel3.BackgroundTransparency = 1
-creditsLabel3.Text = "For Horror Mansion"
+creditsLabel3.Text = "Pour Horror Mansion"
 creditsLabel3.TextColor3 = Color3.fromRGB(220, 220, 255)
 creditsLabel3.Font = Enum.Font.Gotham
 creditsLabel3.TextSize = 14
@@ -323,6 +346,7 @@ createHoverAnimation(fullBrightToggle)
 createHoverAnimation(speedBoostToggle)
 createHoverAnimation(noClipToggle)
 createHoverAnimation(randomSpinButton)
+createHoverAnimation(fakeMonsterSpawnButton)
 createHoverAnimation(savePositionButton)
 createHoverAnimation(teleportToSavedButton)
 createHoverAnimation(minimizeButton)
@@ -428,6 +452,71 @@ randomSpinButton.MouseButton1Click:Connect(function()
     end
 end)
 
+fakeMonsterSpawnButton.MouseButton1Click:Connect(function()
+    if not monsterActive and RootPart then
+        monsterActive = true
+        fakeMonsterSpawnButton.Text = "Invocation..."
+        monsterSpawnEvent:FireServer(RootPart.Position)
+        wait(4) -- Cooldown plus long pour l'effet
+        monsterActive = false
+        fakeMonsterSpawnButton.Text = "Fake Monster Spawn"
+    end
+end)
+
+-- Effet du faux monstre côté client
+monsterSpawnEvent.OnClientEvent:Connect(function(position)
+    -- Création du modèle du monstre
+    local monster = Instance.new("Model")
+    local body = Instance.new("Part")
+    body.Size = Vector3.new(3, 5, 2) -- Plus grand pour être visible
+    body.Anchored = false
+    body.CanCollide = true
+    body.Color = Color3.fromRGB(40, 20, 20) -- Couleur sombre et menaçante
+    body.Material = Enum.Material.Rock
+    body.Position = position + Vector3.new(0, 2.5, 0)
+    body.Parent = monster
+    local head = Instance.new("Part")
+    head.Size = Vector3.new(2, 2, 2)
+    head.Anchored = false
+    head.CanCollide = true
+    head.Color = Color3.fromRGB(40, 20, 20)
+    head.Material = Enum.Material.Rock
+    head.Position = position + Vector3.new(0, 6, 0)
+    head.Parent = monster
+
+    -- Ajout d'une texture effrayante
+    local decal = Instance.new("Decal")
+    decal.Texture = "rbxassetid://143913013" -- Visage fantomatique
+    decal.Face = Enum.NormalId.Front
+    decal.Parent = head
+
+    -- Ajout d'un effet de lumière rouge
+    local light = Instance.new("PointLight")
+    light.Color = Color3.fromRGB(255, 0, 0)
+    light.Brightness = 2
+    light.Range = 10
+    light.Parent = head
+
+    -- Ajout d'un Humanoid pour le mouvement
+    local humanoid = Instance.new("Humanoid")
+    humanoid.WalkSpeed = 10
+    humanoid.Parent = monster
+    monster.PrimaryPart = body
+    monster.Parent = Workspace
+
+    -- Simulation de mouvement
+    spawn(function()
+        humanoid:MoveTo(position + Vector3.new(math.random(-7, 7), 0, math.random(-7, 7)))
+        wait(3) -- Le monstre reste plus longtemps
+        local fadeTween = TweenService:Create(body, TweenInfo.new(0.5, Enum.EasingStyle.Linear), {Transparency = 1})
+        local headFadeTween = TweenService:Create(head, TweenInfo.new(0.5, Enum.EasingStyle.Linear), {Transparency = 1})
+        fadeTween:Play()
+        headFadeTween:Play()
+        wait(0.5)
+        monster:Destroy()
+    end)
+end)
+
 savePositionButton.MouseButton1Click:Connect(function()
     savedPosition = RootPart.CFrame
 end)
@@ -436,7 +525,7 @@ teleportToSavedButton.MouseButton1Click:Connect(function()
     if savedPosition then
         RootPart.CFrame = savedPosition
     else
-        warn("No position saved!")
+        warn("Aucune position sauvegardée !")
     end
 end)
 
