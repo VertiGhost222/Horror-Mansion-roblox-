@@ -14,11 +14,22 @@ local RootPart = Character:WaitForChild("HumanoidRootPart")
 local Workspace = game:GetService("Workspace")
 local Lighting = game:GetService("Lighting")
 
--- Update character on respawn
+-- Variable to track speed boost state
+local speedBoostActive = false
+local defaultSpeed = 16 -- Default speed to revert to
+local boostedSpeed = 50 -- Speed when boost is active
+
+-- Update character on respawn and handle speed reset
 LocalPlayer.CharacterAdded:Connect(function(char)
     Character = char
     Humanoid = char:WaitForChild("Humanoid")
     RootPart = char:WaitForChild("HumanoidRootPart")
+    -- Reset speed to default on respawn
+    if speedBoostActive then
+        Humanoid.WalkSpeed = boostedSpeed
+    else
+        Humanoid.WalkSpeed = defaultSpeed
+    end
 end)
 
 -- Cheats Tab
@@ -36,41 +47,20 @@ CheatsSection:NewToggle("Full Bright", "See everything clearly", function(state)
     end
 end)
 
--- Walk Speed Toggle and Slider (Improved for Mobile)
-local customSpeedEnabled = false
-local customSpeedValue = 16 -- Default speed
-
-CheatsSection:NewToggle("Custom Speed", "Force a stable walk speed", function(state)
-    customSpeedEnabled = state
+-- Permanent Speed Boost Toggle (until death/respawn)
+CheatsSection:NewToggle("Speed Boost", "Increase speed until you die or respawn", function(state)
+    speedBoostActive = state
     if state then
-        -- Start a loop to enforce the speed
-        spawn(function()
-            while customSpeedEnabled and Humanoid do
-                if Humanoid.WalkSpeed ~= customSpeedValue then
-                    Humanoid.WalkSpeed = customSpeedValue
-                end
-                wait(0.1) -- Check every 0.1 seconds
-            end
-        end)
+        -- Apply the boosted speed
+        if Humanoid then
+            Humanoid.WalkSpeed = boostedSpeed
+        end
     else
-        -- Reset to default speed when disabled
-        Humanoid.WalkSpeed = 16
+        -- Revert to default speed
+        if Humanoid then
+            Humanoid.WalkSpeed = defaultSpeed
+        end
     end
-end)
-
-CheatsSection:NewSlider("Walk Speed", "Adjust your speed (use with Custom Speed toggle)", 100, 16, function(value)
-    customSpeedValue = value
-    if customSpeedEnabled then
-        Humanoid.WalkSpeed = value
-    end
-end)
-
--- Speed Boost Button
-CheatsSection:NewButton("Speed Boost", "Temporarily increase speed for 5 seconds", function()
-    local originalSpeed = customSpeedEnabled and customSpeedValue or Humanoid.WalkSpeed
-    Humanoid.WalkSpeed = 50
-    wait(5)
-    Humanoid.WalkSpeed = originalSpeed
 end)
 
 -- Heal Button
