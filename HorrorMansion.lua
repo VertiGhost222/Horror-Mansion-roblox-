@@ -88,6 +88,7 @@ print("Horror Mansion GUI by VertiGhost loaded successfully!")
 local UserInputService = game:GetService("UserInputService")
 local screenGui = LocalPlayer.PlayerGui:WaitForChild("Kavo UI")
 local mainFrame = screenGui.MainFrame
+local topBar = mainFrame:WaitForChild("TopBar") -- Cible la barre supérieure de Kavo UI
 
 mainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 
@@ -128,11 +129,11 @@ end)
 
 local minimizeButton = Instance.new("TextButton")
 minimizeButton.Size = UDim2.new(0, 30, 0, 30)
-minimizeButton.Position = UDim2.new(1, -60, 0, 0)
+minimizeButton.Position = UDim2.new(1, -40, 0, 5) -- Position ajustée pour être à côté du "X"
 minimizeButton.Text = "-"
 minimizeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-minimizeButton.Parent = mainFrame
+minimizeButton.Parent = topBar -- Placé dans la barre supérieure
 
 local restoreButton = Instance.new("TextButton")
 restoreButton.Size = UDim2.new(0, 50, 0, 50)
