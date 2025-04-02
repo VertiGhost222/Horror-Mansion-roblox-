@@ -86,10 +86,10 @@ Library:MakeNotification({
 print("Horror Mansion GUI by VertiGhost loaded successfully!")
 
 local UserInputService = game:GetService("UserInputService")
-local gui = LocalPlayer.PlayerGui:WaitForChild("Kavo UI").MainFrame
+local screenGui = LocalPlayer.PlayerGui:WaitForChild("Kavo UI")
+local mainFrame = screenGui.MainFrame
 
-gui.Position = UDim2.new(0.5, 0, 0.5, 0) -- Position initiale
-gui.AnchorPoint = Vector2.new(0.5, 0.5) -- Centre le point d'ancrage pour un déplacement fluide
+mainFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 
 local dragging
 local dragInput
@@ -98,16 +98,14 @@ local startPos
 
 local function update(input)
     local delta = input.Position - dragStart
-    local newPosX = startPos.X.Offset + delta.X
-    local newPosY = startPos.Y.Offset + delta.Y
-    gui.Position = UDim2.new(0, newPosX, 0, newPosY)
+    mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 end
 
-gui.InputBegan:Connect(function(input)
+mainFrame.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         dragging = true
         dragStart = input.Position
-        startPos = gui.Position
+        startPos = mainFrame.Position
         input.Changed:Connect(function()
             if input.UserInputState == Enum.UserInputState.End then
                 dragging = false
@@ -116,7 +114,7 @@ gui.InputBegan:Connect(function(input)
     end
 end)
 
-gui.InputChanged:Connect(function(input)
+mainFrame.InputChanged:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
         dragInput = input
     end
@@ -126,4 +124,31 @@ UserInputService.InputChanged:Connect(function(input)
     if input == dragInput and dragging then
         update(input)
     end
+end)
+
+local minimizeButton = Instance.new("TextButton")
+minimizeButton.Size = UDim2.new(0, 30, 0, 30)
+minimizeButton.Position = UDim2.new(1, -60, 0, 0)
+minimizeButton.Text = "-"
+minimizeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+minimizeButton.Parent = mainFrame
+
+local restoreButton = Instance.new("TextButton")
+restoreButton.Size = UDim2.new(0, 50, 0, 50)
+restoreButton.Position = UDim2.new(0.5, 0, 0.5, 0)
+restoreButton.Text = "+"
+restoreButton.BackgroundColor3 = Color3.fromRGB(0, 255, 0)
+restoreButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+restoreButton.Visible = false
+restoreButton.Parent = screenGui
+
+minimizeButton.MouseButton1Click:Connect(function()
+    mainFrame.Visible = false
+    restoreButton.Visible = true
+end)
+
+restoreButton.MouseButton1Click:Connect(function()
+    mainFrame.Visible = true
+    restoreButton.Visible = false
 end)
