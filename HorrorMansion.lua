@@ -86,7 +86,10 @@ Library:MakeNotification({
 print("Horror Mansion GUI by VertiGhost loaded successfully!")
 
 local UserInputService = game:GetService("UserInputService")
-local gui = Window.MainFrame
+local gui = LocalPlayer.PlayerGui:WaitForChild("Kavo UI").MainFrame
+
+gui.Position = UDim2.new(0.5, 0, 0.5, 0) -- Position initiale
+gui.AnchorPoint = Vector2.new(0.5, 0.5) -- Centre le point d'ancrage pour un déplacement fluide
 
 local dragging
 local dragInput
@@ -95,7 +98,9 @@ local startPos
 
 local function update(input)
     local delta = input.Position - dragStart
-    gui.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+    local newPosX = startPos.X.Offset + delta.X
+    local newPosY = startPos.Y.Offset + delta.Y
+    gui.Position = UDim2.new(0, newPosX, 0, newPosY)
 end
 
 gui.InputBegan:Connect(function(input)
