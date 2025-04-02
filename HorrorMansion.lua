@@ -14,6 +14,7 @@ local boostedSpeed = 50
 local savedPosition = nil
 local noClipActive = false
 local noClipConnection
+local spinning = false
 
 LocalPlayer.CharacterAdded:Connect(function(char)
     Character = char
@@ -235,6 +236,19 @@ ncCorner.CornerRadius = UDim.new(0, 6)
 ncCorner.Parent = noClipToggle
 noClipToggle.Parent = cheatsContent
 
+local randomSpinButton = Instance.new("TextButton")
+randomSpinButton.Size = UDim2.new(1, -20, 0, 50)
+randomSpinButton.Position = UDim2.new(0, 10, 0, 175)
+randomSpinButton.Text = "Random Spin"
+randomSpinButton.BackgroundColor3 = Color3.fromRGB(45, 45, 70)
+randomSpinButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+randomSpinButton.Font = Enum.Font.Gotham
+randomSpinButton.TextSize = 14
+local rsCorner = Instance.new("UICorner")
+rsCorner.CornerRadius = UDim.new(0, 6)
+rsCorner.Parent = randomSpinButton
+randomSpinButton.Parent = cheatsContent
+
 local savePositionButton = Instance.new("TextButton")
 savePositionButton.Size = UDim2.new(1, -20, 0, 50)
 savePositionButton.Position = UDim2.new(0, 10, 0, 10)
@@ -308,6 +322,7 @@ createHoverAnimation(creditsTabButton)
 createHoverAnimation(fullBrightToggle)
 createHoverAnimation(speedBoostToggle)
 createHoverAnimation(noClipToggle)
+createHoverAnimation(randomSpinButton)
 createHoverAnimation(savePositionButton)
 createHoverAnimation(teleportToSavedButton)
 createHoverAnimation(minimizeButton)
@@ -390,6 +405,26 @@ noClipToggle.MouseButton1Click:Connect(function()
             end
         end
         noClipToggle.Text = "NoClip: OFF"
+    end
+end)
+
+randomSpinButton.MouseButton1Click:Connect(function()
+    if not spinning and RootPart then
+        spinning = true
+        randomSpinButton.Text = "Spinning..."
+        local spinTime = 3
+        local startTime = tick()
+        local connection
+        connection = game:GetService("RunService").RenderStepped:Connect(function()
+            if tick() - startTime < spinTime and RootPart then
+                local randomAngle = math.rad(math.random(0, 360))
+                RootPart.CFrame = RootPart.CFrame * CFrame.Angles(0, randomAngle, 0)
+            else
+                connection:Disconnect()
+                spinning = false
+                randomSpinButton.Text = "Random Spin"
+            end
+        end)
     end
 end)
 
