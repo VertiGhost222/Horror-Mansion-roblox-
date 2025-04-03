@@ -1,9 +1,5 @@
 if game.PlaceId ~= 522527978 then
-    game.StarterGui:SetCore("SendNotification", {
-        Title = "Cannot Launch Script",
-        Text = "This script can only be used in Horror Mansion!",
-        Duration = 5
-    })
+    game.StarterGui:SetCore("SendNotification", {Title = "Cannot Launch Script", Text = "This script can only be used in Horror Mansion!", Duration = 5})
     return
 end
 
@@ -387,10 +383,7 @@ local function createHoverAnimation(button)
     local originalSize = button.Size
     local originalColor = button.BackgroundColor3
     button.MouseEnter:Connect(function()
-        local hoverTween = TweenService:Create(button, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            BackgroundColor3 = Color3.fromRGB(100, 100, 130),
-            Size = UDim2.new(originalSize.X.Scale, originalSize.X.Offset + 15, originalSize.Y.Scale, originalSize.Y.Offset + 10)
-        })
+        local hoverTween = TweenService:Create(button, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundColor3 = Color3.fromRGB(100, 100, 130), Size = UDim2.new(originalSize.X.Scale, originalSize.X.Offset + 15, originalSize.Y.Scale, originalSize.Y.Offset + 10)})
         hoverTween:Play()
         local hoverGlow = Instance.new("ImageLabel")
         hoverGlow.Image = "rbxassetid://5028857475"
@@ -408,10 +401,7 @@ local function createHoverAnimation(button)
         end)
     end)
     button.MouseLeave:Connect(function()
-        TweenService:Create(button, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-            BackgroundColor3 = originalColor,
-            Size = originalSize
-        }):Play()
+        TweenService:Create(button, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {BackgroundColor3 = originalColor, Size = originalSize}):Play()
     end)
 end
 
@@ -433,9 +423,7 @@ local function createTabTransition(content)
     return function()
         content.Position = UDim2.new(0, 50, 0, 0)
         content.Visible = true
-        TweenService:Create(content, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-            Position = UDim2.new(0, 0, 0, 0)
-        }):Play()
+        TweenService:Create(content, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 0)}):Play()
         cheatsContent.Visible = (content == cheatsContent)
         teleportContent.Visible = (content == teleportContent)
         creditsContent.Visible = (content == creditsContent)
@@ -648,52 +636,29 @@ teleportToSavedButton.MouseButton1Click:Connect(function()
 end)
 
 minimizeButton.MouseButton1Click:Connect(function()
-    particleEmitter.Rate = 30
-    local tween = TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-        Size = UDim2.new(0, 0, 0, 0),
-        BackgroundTransparency = 1,
-        Rotation = 10
-    })
+    particleEmitter.Enabled = false
+    local tween = TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1})
     tween:Play()
     tween.Completed:Connect(function()
         mainFrame.Visible = false
         restoreButton.Visible = true
-        particleEmitter.Enabled = false
-        TweenService:Create(restoreButton, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-            BackgroundTransparency = 0,
-            Size = UDim2.new(0, 80, 0, 80),
-            Rotation = 0
-        }):Play()
+        TweenService:Create(restoreButton, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {BackgroundTransparency = 0, Size = UDim2.new(0, 80, 0, 80)}):Play()
     end)
 end)
 
 restoreButton.MouseButton1Click:Connect(function()
-    particleEmitter.Enabled = true
-    particleEmitter.Rate = 30
-    local tween = TweenService:Create(restoreButton, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-        BackgroundTransparency = 1,
-        Size = UDim2.new(0, 0, 0, 0),
-        Rotation = -10
-    })
+    local tween = TweenService:Create(restoreButton, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 1, Size = UDim2.new(0, 0, 0, 0)})
     tween:Play()
     tween.Completed:Connect(function()
         restoreButton.Visible = false
         mainFrame.Visible = true
-        TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
-            Size = UDim2.new(0, 450, 0, 600),
-            BackgroundTransparency = 0,
-            Rotation = 0
-        }):Play()
-        wait(0.5)
-        particleEmitter.Rate = 5
+        particleEmitter.Enabled = true
+        TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0, 450, 0, 600), BackgroundTransparency = 0}):Play()
     end)
 end)
 
 closeButton.MouseButton1Click:Connect(function()
-    local tween = TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-        Size = UDim2.new(0, 0, 0, 0),
-        BackgroundTransparency = 1
-    })
+    local tween = TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1})
     tween:Play()
     tween.Completed:Connect(function()
         screenGui:Destroy()
@@ -738,26 +703,15 @@ end)
 mainFrame.Size = UDim2.new(0, 0, 0, 0)
 mainFrame.BackgroundTransparency = 1
 mainFrame.Visible = true
-local openTween = TweenService:Create(mainFrame, TweenInfo.new(0.8, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
-    Size = UDim2.new(0, 450, 0, 600),
-    BackgroundTransparency = 0
-})
+local openTween = TweenService:Create(mainFrame, TweenInfo.new(0.8, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 450, 0, 600), BackgroundTransparency = 0})
 openTween:Play()
 spawn(function()
     wait(0.2)
     particleEmitter.Enabled = true
-    wait(2)
-    particleEmitter.Rate = 5
 end)
 
-local glowTween = TweenService:Create(glow, TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
-    ImageTransparency = 0.7,
-    Size = UDim2.new(1, 100, 1, 100)
-})
+local glowTween = TweenService:Create(glow, TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {ImageTransparency = 0.7, Size = UDim2.new(1, 100, 1, 100)})
 glowTween:Play()
 
-local titlePulse = TweenService:Create(titleGlow, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
-    ImageTransparency = 0.8,
-    Size = UDim2.new(1, 80, 1, 80)
-})
+local titlePulse = TweenService:Create(titleGlow, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {ImageTransparency = 0.8, Size = UDim2.new(1, 80, 1, 80)})
 titlePulse:Play()
