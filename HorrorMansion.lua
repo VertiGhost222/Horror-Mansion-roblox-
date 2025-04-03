@@ -1,7 +1,7 @@
 if game.PlaceId ~= 522527978 then
     game.StarterGui:SetCore("SendNotification", {
-        Title = "Error",
-        Text = "This script only works in Horror Mansion!",
+        Title = "Cannot Launch Script",
+        Text = "This script can only be used in Horror Mansion!",
         Duration = 5
     })
     return
