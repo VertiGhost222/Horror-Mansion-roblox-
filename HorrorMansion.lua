@@ -77,6 +77,21 @@ glow.Size = UDim2.new(1, 80, 1, 80)
 glow.Position = UDim2.new(0, -40, 0, -40)
 glow.ZIndex = -1
 glow.Parent = mainFrame
+local particleEmitter = Instance.new("ParticleEmitter")
+particleEmitter.Texture = "rbxassetid://243660947"
+particleEmitter.Lifetime = NumberRange.new(0.5, 1)
+particleEmitter.Rate = 20
+particleEmitter.Speed = NumberRange.new(0.5, 1)
+particleEmitter.SpreadAngle = Vector2.new(360, 360)
+particleEmitter.Color = ColorSequence.new(Color3.fromRGB(200, 100, 100))
+particleEmitter.Size = NumberSequence.new(0.2)
+particleEmitter.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.8), NumberSequenceKeypoint.new(1, 1)})
+particleEmitter.Parent = mainFrame
+local ambientLight = Instance.new("PointLight")
+ambientLight.Color = Color3.fromRGB(200, 100, 100)
+ambientLight.Brightness = 0.5
+ambientLight.Range = 20
+ambientLight.Parent = mainFrame
 mainFrame.Parent = screenGui
 
 local titleBar = Instance.new("Frame")
@@ -95,6 +110,14 @@ titleStroke.Color = Color3.fromRGB(220, 120, 120)
 titleStroke.Thickness = 2
 titleStroke.Transparency = 0.3
 titleStroke.Parent = titleBar
+local titleGlow = Instance.new("ImageLabel")
+titleGlow.Image = "rbxassetid://5028857475"
+titleGlow.ImageTransparency = 0.6
+titleGlow.BackgroundTransparency = 1
+titleGlow.Size = UDim2.new(1, 60, 1, 60)
+titleGlow.Position = UDim2.new(0, -30, 0, -30)
+titleGlow.ZIndex = -1
+titleGlow.Parent = titleBar
 titleBar.Parent = mainFrame
 
 local titleLabel = Instance.new("TextLabel")
@@ -258,8 +281,8 @@ speedBoostToggle.Position = UDim2.new(0, 10, 0, 80)
 speedBoostToggle.Text = "Speed Boost: OFF"
 speedBoostToggle.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
 speedBoostToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
-fullBrightToggle.Font = Enum.Font.Gotham
-fullBrightToggle.TextSize = 20
+speedBoostToggle.Font = Enum.Font.Gotham
+speedBoostToggle.TextSize = 20
 local sbCorner = Instance.new("UICorner")
 sbCorner.CornerRadius = UDim.new(0, 12)
 sbCorner.Parent = speedBoostToggle
@@ -361,16 +384,33 @@ creditsLabel3.TextSize = 18
 creditsLabel3.Parent = creditsContent
 
 local function createHoverAnimation(button)
+    local originalSize = button.Size
+    local originalColor = button.BackgroundColor3
     button.MouseEnter:Connect(function()
-        TweenService:Create(button, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
-            BackgroundColor3 = Color3.fromRGB(70, 70, 100),
-            Size = UDim2.new(button.Size.X.Scale, button.Size.X.Offset + 10, button.Size.Y.Scale, button.Size.Y.Offset + 8)
-        }):Play()
+        local hoverTween = TweenService:Create(button, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            BackgroundColor3 = Color3.fromRGB(100, 100, 130),
+            Size = UDim2.new(originalSize.X.Scale, originalSize.X.Offset + 15, originalSize.Y.Scale, originalSize.Y.Offset + 10)
+        })
+        hoverTween:Play()
+        local hoverGlow = Instance.new("ImageLabel")
+        hoverGlow.Image = "rbxassetid://5028857475"
+        hoverGlow.ImageTransparency = 0.6
+        hoverGlow.BackgroundTransparency = 1
+        hoverGlow.Size = UDim2.new(1, 40, 1, 40)
+        hoverGlow.Position = UDim2.new(0, -20, 0, -20)
+        hoverGlow.ZIndex = button.ZIndex - 1
+        hoverGlow.Parent = button
+        spawn(function()
+            wait(0.1)
+            TweenService:Create(hoverGlow, TweenInfo.new(0.5, Enum.EasingStyle.Quad), {ImageTransparency = 1}):Play()
+            wait(0.5)
+            hoverGlow:Destroy()
+        end)
     end)
     button.MouseLeave:Connect(function()
         TweenService:Create(button, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
-            BackgroundColor3 = button == fakeMonsterSpawnButton and Color3.fromRGB(50, 20, 20) or (button == cheatsTabButton and Color3.fromRGB(30, 30, 60) or Color3.fromRGB(20, 20, 50)),
-            Size = UDim2.new(button.Size.X.Scale, button.Size.X.Offset - 10, button.Size.Y.Scale, button.Size.Y.Offset - 8)
+            BackgroundColor3 = originalColor,
+            Size = originalSize
         }):Play()
     end)
 end
@@ -389,35 +429,25 @@ createHoverAnimation(minimizeButton)
 createHoverAnimation(closeButton)
 createHoverAnimation(restoreButton)
 
-cheatsTabButton.MouseButton1Click:Connect(function()
-    TweenService:Create(cheatsContent, TweenInfo.new(0.4, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 0)}):Play()
-    cheatsContent.Visible = true
-    teleportContent.Visible = false
-    creditsContent.Visible = false
-    cheatsTabButton.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
-    teleportTabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 50)
-    creditsTabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 50)
-end)
+local function createTabTransition(content)
+    return function()
+        content.Position = UDim2.new(0, 50, 0, 0)
+        content.Visible = true
+        TweenService:Create(content, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+            Position = UDim2.new(0, 0, 0, 0)
+        }):Play()
+        cheatsContent.Visible = (content == cheatsContent)
+        teleportContent.Visible = (content == teleportContent)
+        creditsContent.Visible = (content == creditsContent)
+        cheatsTabButton.BackgroundColor3 = (content == cheatsContent) and Color3.fromRGB(30, 30, 60) or Color3.fromRGB(20, 20, 50)
+        teleportTabButton.BackgroundColor3 = (content == teleportContent) and Color3.fromRGB(30, 30, 60) or Color3.fromRGB(20, 20, 50)
+        creditsTabButton.BackgroundColor3 = (content == creditsContent) and Color3.fromRGB(30, 30, 60) or Color3.fromRGB(20, 20, 50)
+    end
+end
 
-teleportTabButton.MouseButton1Click:Connect(function()
-    TweenService:Create(teleportContent, TweenInfo.new(0.4, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 0)}):Play()
-    cheatsContent.Visible = false
-    teleportContent.Visible = true
-    creditsContent.Visible = false
-    cheatsTabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 50)
-    teleportTabButton.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
-    creditsTabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 50)
-end)
-
-creditsTabButton.MouseButton1Click:Connect(function()
-    TweenService:Create(creditsContent, TweenInfo.new(0.4, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 0)}):Play()
-    cheatsContent.Visible = false
-    teleportContent.Visible = false
-    creditsContent.Visible = true
-    cheatsTabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 50)
-    teleportTabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 50)
-    creditsTabButton.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
-end)
+cheatsTabButton.MouseButton1Click:Connect(createTabTransition(cheatsContent))
+teleportTabButton.MouseButton1Click:Connect(createTabTransition(teleportContent))
+creditsTabButton.MouseButton1Click:Connect(createTabTransition(creditsContent))
 
 fullBrightToggle.MouseButton1Click:Connect(function()
     local state = not (Lighting.Ambient == Color3.new(1, 1, 1))
@@ -496,10 +526,8 @@ fakeMonsterSpawnButton.MouseButton1Click:Connect(function()
         monsterActive = true
         fakeMonsterSpawnButton.Text = "Spawning..."
         local spawnPosition = RootPart.Position + (RootPart.CFrame.LookVector * 5)
-
         local monster = Instance.new("Model")
         monster.Name = "FakeMonster"
-
         local body = Instance.new("Part")
         body.Size = Vector3.new(2.5, 6, 2)
         body.Anchored = false
@@ -508,7 +536,6 @@ fakeMonsterSpawnButton.MouseButton1Click:Connect(function()
         body.Material = Enum.Material.CorrodedMetal
         body.Position = spawnPosition + Vector3.new(0, 3, 0)
         body.Parent = monster
-
         local leftArm = Instance.new("Part")
         leftArm.Size = Vector3.new(0.8, 3.5, 0.8)
         leftArm.Anchored = false
@@ -517,7 +544,6 @@ fakeMonsterSpawnButton.MouseButton1Click:Connect(function()
         leftArm.Material = Enum.Material.CorrodedMetal
         leftArm.Position = spawnPosition + Vector3.new(-1.5, 4.5, 0)
         leftArm.Parent = monster
-
         local rightArm = Instance.new("Part")
         rightArm.Size = Vector3.new(0.8, 3.5, 0.8)
         rightArm.Anchored = false
@@ -526,7 +552,6 @@ fakeMonsterSpawnButton.MouseButton1Click:Connect(function()
         rightArm.Material = Enum.Material.CorrodedMetal
         rightArm.Position = spawnPosition + Vector3.new(1.5, 4.5, 0)
         rightArm.Parent = monster
-
         local leftLeg = Instance.new("Part")
         leftLeg.Size = Vector3.new(0.9, 3, 0.9)
         leftLeg.Anchored = false
@@ -535,7 +560,6 @@ fakeMonsterSpawnButton.MouseButton1Click:Connect(function()
         leftLeg.Material = Enum.Material.CorrodedMetal
         leftLeg.Position = spawnPosition + Vector3.new(-0.7, 1.5, 0)
         leftLeg.Parent = monster
-
         local rightLeg = Instance.new("Part")
         rightLeg.Size = Vector3.new(0.9, 3, 0.9)
         rightLeg.Anchored = false
@@ -544,7 +568,6 @@ fakeMonsterSpawnButton.MouseButton1Click:Connect(function()
         rightLeg.Material = Enum.Material.CorrodedMetal
         rightLeg.Position = spawnPosition + Vector3.new(0.7, 1.5, 0)
         rightLeg.Parent = monster
-
         local head = Instance.new("Part")
         head.Size = Vector3.new(1.6, 1.6, 1.6)
         head.Anchored = false
@@ -553,7 +576,6 @@ fakeMonsterSpawnButton.MouseButton1Click:Connect(function()
         head.Material = Enum.Material.CorrodedMetal
         head.Position = spawnPosition + Vector3.new(0, 6.5, 0)
         head.Parent = monster
-
         local leftEye = Instance.new("Part")
         leftEye.Size = Vector3.new(0.4, 0.4, 0.4)
         leftEye.Anchored = false
@@ -562,7 +584,6 @@ fakeMonsterSpawnButton.MouseButton1Click:Connect(function()
         leftEye.Material = Enum.Material.Neon
         leftEye.Position = spawnPosition + Vector3.new(-0.4, 6.5, 0.6)
         leftEye.Parent = monster
-
         local rightEye = Instance.new("Part")
         rightEye.Size = Vector3.new(0.4, 0.4, 0.4)
         rightEye.Anchored = false
@@ -571,26 +592,22 @@ fakeMonsterSpawnButton.MouseButton1Click:Connect(function()
         rightEye.Material = Enum.Material.Neon
         rightEye.Position = spawnPosition + Vector3.new(0.4, 6.5, 0.6)
         rightEye.Parent = monster
-
         local aura = Instance.new("PointLight")
         aura.Color = Color3.fromRGB(255, 0, 0)
         aura.Brightness = 3
         aura.Range = 14
         aura.Parent = head
-
         local sound = Instance.new("Sound")
         sound.SoundId = "rbxassetid://9119707206"
         sound.Volume = 2.5
         sound.Pitch = 0.85
         sound.Parent = body
         sound:Play()
-
         local humanoid = Instance.new("Humanoid")
         humanoid.WalkSpeed = 16
         humanoid.Parent = monster
         monster.PrimaryPart = body
         monster.Parent = Workspace
-
         spawn(function()
             for i = 1, 6 do
                 humanoid:MoveTo(spawnPosition + Vector3.new(math.random(-15, 15), 0, math.random(-15, 15)))
@@ -631,27 +648,52 @@ teleportToSavedButton.MouseButton1Click:Connect(function()
 end)
 
 minimizeButton.MouseButton1Click:Connect(function()
-    local tween = TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1})
+    particleEmitter.Rate = 30
+    local tween = TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        Size = UDim2.new(0, 0, 0, 0),
+        BackgroundTransparency = 1,
+        Rotation = 10
+    })
     tween:Play()
     tween.Completed:Connect(function()
         mainFrame.Visible = false
         restoreButton.Visible = true
-        TweenService:Create(restoreButton, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {BackgroundTransparency = 0, Size = UDim2.new(0, 80, 0, 80)}):Play()
+        particleEmitter.Enabled = false
+        TweenService:Create(restoreButton, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+            BackgroundTransparency = 0,
+            Size = UDim2.new(0, 80, 0, 80),
+            Rotation = 0
+        }):Play()
     end)
 end)
 
 restoreButton.MouseButton1Click:Connect(function()
-    local tween = TweenService:Create(restoreButton, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 1, Size = UDim2.new(0, 0, 0, 0)})
+    particleEmitter.Enabled = true
+    particleEmitter.Rate = 30
+    local tween = TweenService:Create(restoreButton, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        BackgroundTransparency = 1,
+        Size = UDim2.new(0, 0, 0, 0),
+        Rotation = -10
+    })
     tween:Play()
     tween.Completed:Connect(function()
         restoreButton.Visible = false
         mainFrame.Visible = true
-        TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 450, 0, 600), BackgroundTransparency = 0}):Play()
+        TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.In), {
+            Size = UDim2.new(0, 450, 0, 600),
+            BackgroundTransparency = 0,
+            Rotation = 0
+        }):Play()
+        wait(0.5)
+        particleEmitter.Rate = 5
     end)
 end)
 
 closeButton.MouseButton1Click:Connect(function()
-    local tween = TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1})
+    local tween = TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+        Size = UDim2.new(0, 0, 0, 0),
+        BackgroundTransparency = 1
+    })
     tween:Play()
     tween.Completed:Connect(function()
         screenGui:Destroy()
@@ -696,4 +738,26 @@ end)
 mainFrame.Size = UDim2.new(0, 0, 0, 0)
 mainFrame.BackgroundTransparency = 1
 mainFrame.Visible = true
-TweenService:Create(mainFrame, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, 450, 0, 600), BackgroundTransparency = 0}):Play()
+local openTween = TweenService:Create(mainFrame, TweenInfo.new(0.8, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+    Size = UDim2.new(0, 450, 0, 600),
+    BackgroundTransparency = 0
+})
+openTween:Play()
+spawn(function()
+    wait(0.2)
+    particleEmitter.Enabled = true
+    wait(2)
+    particleEmitter.Rate = 5
+end)
+
+local glowTween = TweenService:Create(glow, TweenInfo.new(1.5, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+    ImageTransparency = 0.7,
+    Size = UDim2.new(1, 100, 1, 100)
+})
+glowTween:Play()
+
+local titlePulse = TweenService:Create(titleGlow, TweenInfo.new(2, Enum.EasingStyle.Sine, Enum.EasingDirection.InOut, -1, true), {
+    ImageTransparency = 0.8,
+    Size = UDim2.new(1, 80, 1, 80)
+})
+titlePulse:Play()
