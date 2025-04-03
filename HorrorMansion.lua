@@ -1,3 +1,12 @@
+if game.PlaceId ~= 522527978 then
+    game.StarterGui:SetCore("SendNotification", {
+        Title = "Error",
+        Text = "This script only works in Horror Mansion!",
+        Duration = 5
+    })
+    return
+end
+
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
@@ -7,9 +16,7 @@ local Workspace = game:GetService("Workspace")
 local Lighting = game:GetService("Lighting")
 local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
--- Variables pour les fonctionnalités
 local speedBoostActive = false
 local defaultSpeed = 16
 local boostedSpeed = 50
@@ -19,7 +26,6 @@ local noClipConnection
 local spinning = false
 local monsterActive = false
 
--- Gestion du personnage
 LocalPlayer.CharacterAdded:Connect(function(char)
     Character = char
     Humanoid = char:WaitForChild("Humanoid")
@@ -40,180 +46,179 @@ LocalPlayer.CharacterAdded:Connect(function(char)
     end
 end)
 
--- Création du GUI
 local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "HorrorMansionHacks"
 screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 screenGui.ResetOnSpawn = false
 
 local mainFrame = Instance.new("Frame")
-mainFrame.Size = UDim2.new(0, 500, 0, 620)
-mainFrame.Position = UDim2.new(0.5, -250, 0.5, -310)
-mainFrame.BackgroundColor3 = Color3.fromRGB(8, 8, 15)
+mainFrame.Size = UDim2.new(0, 450, 0, 600)
+mainFrame.Position = UDim2.new(0.5, -225, 0.5, -300)
+mainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 20)
 mainFrame.BorderSizePixel = 0
 mainFrame.ClipsDescendants = true
 local corner = Instance.new("UICorner")
-corner.CornerRadius = UDim.new(0, 30)
+corner.CornerRadius = UDim.new(0, 25)
 corner.Parent = mainFrame
 local gradient = Instance.new("UIGradient")
-gradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(8, 8, 15)), ColorSequenceKeypoint.new(1, Color3.fromRGB(25, 25, 45))}
+gradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(10, 10, 20)), ColorSequenceKeypoint.new(1, Color3.fromRGB(30, 30, 60))}
 gradient.Rotation = 45
 gradient.Parent = mainFrame
 local stroke = Instance.new("UIStroke")
-stroke.Color = Color3.fromRGB(130, 130, 190)
+stroke.Color = Color3.fromRGB(200, 100, 100)
 stroke.Thickness = 3
-stroke.Transparency = 0.3
+stroke.Transparency = 0.1
 stroke.Parent = mainFrame
-local shadow = Instance.new("ImageLabel")
-shadow.Image = "rbxassetid://1316045217"
-shadow.ImageTransparency = 0.4
-shadow.BackgroundTransparency = 1
-shadow.Size = UDim2.new(1, 80, 1, 80)
-shadow.Position = UDim2.new(0, -40, 0, -40)
-shadow.ZIndex = -1
-shadow.Parent = mainFrame
+local glow = Instance.new("ImageLabel")
+glow.Image = "rbxassetid://5028857475"
+glow.ImageTransparency = 0.5
+glow.BackgroundTransparency = 1
+glow.Size = UDim2.new(1, 80, 1, 80)
+glow.Position = UDim2.new(0, -40, 0, -40)
+glow.ZIndex = -1
+glow.Parent = mainFrame
 mainFrame.Parent = screenGui
 
-local topBar = Instance.new("Frame")
-topBar.Size = UDim2.new(1, 0, 0, 80)
-topBar.BackgroundColor3 = Color3.fromRGB(15, 15, 30)
-topBar.BorderSizePixel = 0
-local topCorner = Instance.new("UICorner")
-topCorner.CornerRadius = UDim.new(0, 30)
-topCorner.Parent = topBar
-local topGradient = Instance.new("UIGradient")
-topGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 15, 30)), ColorSequenceKeypoint.new(1, Color3.fromRGB(35, 35, 55))}
-topGradient.Rotation = 90
-topGradient.Parent = topBar
-local topStroke = Instance.new("UIStroke")
-topStroke.Color = Color3.fromRGB(150, 150, 210)
-topStroke.Thickness = 2
-topStroke.Transparency = 0.5
-topStroke.Parent = topBar
-topBar.Parent = mainFrame
+local titleBar = Instance.new("Frame")
+titleBar.Size = UDim2.new(1, 0, 0, 70)
+titleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 40)
+titleBar.BorderSizePixel = 0
+local titleCorner = Instance.new("UICorner")
+titleCorner.CornerRadius = UDim.new(0, 25)
+titleCorner.Parent = titleBar
+local titleGradient = Instance.new("UIGradient")
+titleGradient.Color = ColorSequence.new{ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 40)), ColorSequenceKeypoint.new(1, Color3.fromRGB(50, 50, 80))}
+titleGradient.Rotation = 90
+titleGradient.Parent = titleBar
+local titleStroke = Instance.new("UIStroke")
+titleStroke.Color = Color3.fromRGB(220, 120, 120)
+titleStroke.Thickness = 2
+titleStroke.Transparency = 0.3
+titleStroke.Parent = titleBar
+titleBar.Parent = mainFrame
 
 local titleLabel = Instance.new("TextLabel")
-titleLabel.Size = UDim2.new(0.7, 0, 1, 0)
-titleLabel.Position = UDim2.new(0, 30, 0, 0)
+titleLabel.Size = UDim2.new(0.6, 0, 0.8, 0)
+titleLabel.Position = UDim2.new(0, 20, 0.1, 0)
 titleLabel.BackgroundTransparency = 1
 titleLabel.Text = "Horror Mansion Hacks"
-titleLabel.TextColor3 = Color3.fromRGB(240, 240, 255)
-titleLabel.Font = Enum.Font.GothamBlack
-titleLabel.TextSize = 30
+titleLabel.TextColor3 = Color3.fromRGB(255, 200, 200)
+titleLabel.Font = Enum.Font.GothamBold
+titleLabel.TextSize = 28
 titleLabel.TextXAlignment = Enum.TextXAlignment.Left
 local textStroke = Instance.new("UIStroke")
-textStroke.Color = Color3.fromRGB(100, 100, 150)
+textStroke.Color = Color3.fromRGB(150, 50, 50)
 textStroke.Thickness = 1.5
 textStroke.Parent = titleLabel
-titleLabel.Parent = topBar
+titleLabel.Parent = titleBar
 
 local minimizeButton = Instance.new("TextButton")
-minimizeButton.Size = UDim2.new(0, 55, 0, 55)
-minimizeButton.Position = UDim2.new(1, -115, 0, 12)
+minimizeButton.Size = UDim2.new(0, 50, 0, 50)
+minimizeButton.Position = UDim2.new(1, -110, 0, 10)
 minimizeButton.Text = "-"
-minimizeButton.BackgroundColor3 = Color3.fromRGB(35, 35, 65)
+minimizeButton.BackgroundColor3 = Color3.fromRGB(40, 40, 70)
 minimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 minimizeButton.Font = Enum.Font.GothamBold
-minimizeButton.TextSize = 32
+minimizeButton.TextSize = 30
 local minCorner = Instance.new("UICorner")
-minCorner.CornerRadius = UDim.new(0, 18)
+minCorner.CornerRadius = UDim.new(0, 15)
 minCorner.Parent = minimizeButton
-minimizeButton.Parent = topBar
+minimizeButton.Parent = titleBar
 
 local closeButton = Instance.new("TextButton")
-closeButton.Size = UDim2.new(0, 55, 0, 55)
-closeButton.Position = UDim2.new(1, -55, 0, 12)
+closeButton.Size = UDim2.new(0, 50, 0, 50)
+closeButton.Position = UDim2.new(1, -55, 0, 10)
 closeButton.Text = "X"
-closeButton.BackgroundColor3 = Color3.fromRGB(65, 25, 25)
+closeButton.BackgroundColor3 = Color3.fromRGB(70, 20, 20)
 closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeButton.Font = Enum.Font.GothamBold
-closeButton.TextSize = 32
+closeButton.TextSize = 30
 local closeCorner = Instance.new("UICorner")
-closeCorner.CornerRadius = UDim.new(0, 18)
+closeCorner.CornerRadius = UDim.new(0, 15)
 closeCorner.Parent = closeButton
-closeButton.Parent = topBar
+closeButton.Parent = titleBar
 
 local restoreButton = Instance.new("TextButton")
-restoreButton.Size = UDim2.new(0, 90, 0, 90)
-restoreButton.Position = UDim2.new(0.5, -45, 0.5, -45)
+restoreButton.Size = UDim2.new(0, 80, 0, 80)
+restoreButton.Position = UDim2.new(0.5, -40, 0.5, -40)
 restoreButton.Text = "+"
-restoreButton.BackgroundColor3 = Color3.fromRGB(25, 45, 25)
+restoreButton.BackgroundColor3 = Color3.fromRGB(30, 50, 30)
 restoreButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 restoreButton.Font = Enum.Font.GothamBold
-restoreButton.TextSize = 36
+restoreButton.TextSize = 35
 restoreButton.Visible = false
 restoreButton.BackgroundTransparency = 1
 local restoreCorner = Instance.new("UICorner")
-restoreCorner.CornerRadius = UDim.new(0, 45)
+restoreCorner.CornerRadius = UDim.new(0, 40)
 restoreCorner.Parent = restoreButton
 restoreButton.Parent = screenGui
 
 local tabFrame = Instance.new("Frame")
-tabFrame.Size = UDim2.new(0, 170, 1, -100)
-tabFrame.Position = UDim2.new(0, 10, 0, 90)
-tabFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 25)
+tabFrame.Size = UDim2.new(0, 150, 1, -80)
+tabFrame.Position = UDim2.new(0, 10, 0, 80)
+tabFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 30)
 tabFrame.BorderSizePixel = 0
 local tabCorner = Instance.new("UICorner")
-tabCorner.CornerRadius = UDim.new(0, 18)
+tabCorner.CornerRadius = UDim.new(0, 15)
 tabCorner.Parent = tabFrame
 local tabStroke = Instance.new("UIStroke")
-tabStroke.Color = Color3.fromRGB(100, 100, 160)
+tabStroke.Color = Color3.fromRGB(180, 80, 80)
 tabStroke.Thickness = 2
-tabStroke.Transparency = 0.4
+tabStroke.Transparency = 0.2
 tabStroke.Parent = tabFrame
 tabFrame.Parent = mainFrame
 
 local contentFrame = Instance.new("Frame")
-contentFrame.Size = UDim2.new(0, 310, 1, -100)
-contentFrame.Position = UDim2.new(0, 190, 0, 90)
-contentFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 25)
+contentFrame.Size = UDim2.new(0, 280, 1, -80)
+contentFrame.Position = UDim2.new(0, 165, 0, 80)
+contentFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 30)
 contentFrame.BorderSizePixel = 0
 local contentCorner = Instance.new("UICorner")
-contentCorner.CornerRadius = UDim.new(0, 18)
+contentCorner.CornerRadius = UDim.new(0, 15)
 contentCorner.Parent = contentFrame
 local contentStroke = Instance.new("UIStroke")
-contentStroke.Color = Color3.fromRGB(100, 100, 160)
+contentStroke.Color = Color3.fromRGB(180, 80, 80)
 contentStroke.Thickness = 2
-contentStroke.Transparency = 0.4
+contentStroke.Transparency = 0.2
 contentStroke.Parent = contentFrame
 contentFrame.Parent = mainFrame
 
 local cheatsTabButton = Instance.new("TextButton")
-cheatsTabButton.Size = UDim2.new(1, -10, 0, 70)
+cheatsTabButton.Size = UDim2.new(1, -10, 0, 60)
 cheatsTabButton.Position = UDim2.new(0, 5, 0, 10)
 cheatsTabButton.Text = "Cheats"
-cheatsTabButton.BackgroundColor3 = Color3.fromRGB(25, 25, 45)
-cheatsTabButton.TextColor3 = Color3.fromRGB(240, 240, 255)
+cheatsTabButton.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
+cheatsTabButton.TextColor3 = Color3.fromRGB(255, 200, 200)
 cheatsTabButton.Font = Enum.Font.GothamSemibold
-cheatsTabButton.TextSize = 22
+cheatsTabButton.TextSize = 20
 local cheatsTabCorner = Instance.new("UICorner")
-cheatsTabCorner.CornerRadius = UDim.new(0, 14)
+cheatsTabCorner.CornerRadius = UDim.new(0, 12)
 cheatsTabCorner.Parent = cheatsTabButton
 cheatsTabButton.Parent = tabFrame
 
 local teleportTabButton = Instance.new("TextButton")
-teleportTabButton.Size = UDim2.new(1, -10, 0, 70)
-teleportTabButton.Position = UDim2.new(0, 5, 0, 90)
+teleportTabButton.Size = UDim2.new(1, -10, 0, 60)
+teleportTabButton.Position = UDim2.new(0, 5, 0, 80)
 teleportTabButton.Text = "Teleport"
-teleportTabButton.BackgroundColor3 = Color3.fromRGB(15, 15, 35)
-teleportTabButton.TextColor3 = Color3.fromRGB(240, 240, 255)
+teleportTabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 50)
+teleportTabButton.TextColor3 = Color3.fromRGB(255, 200, 200)
 teleportTabButton.Font = Enum.Font.GothamSemibold
-teleportTabButton.TextSize = 22
+teleportTabButton.TextSize = 20
 local teleportTabCorner = Instance.new("UICorner")
-teleportTabCorner.CornerRadius = UDim.new(0, 14)
+teleportTabCorner.CornerRadius = UDim.new(0, 12)
 teleportTabCorner.Parent = teleportTabButton
 teleportTabButton.Parent = tabFrame
 
 local creditsTabButton = Instance.new("TextButton")
-creditsTabButton.Size = UDim2.new(1, -10, 0, 70)
-creditsTabButton.Position = UDim2.new(0, 5, 0, 170)
+creditsTabButton.Size = UDim2.new(1, -10, 0, 60)
+creditsTabButton.Position = UDim2.new(0, 5, 0, 150)
 creditsTabButton.Text = "Credits"
-creditsTabButton.BackgroundColor3 = Color3.fromRGB(15, 15, 35)
-creditsTabButton.TextColor3 = Color3.fromRGB(240, 240, 255)
+creditsTabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 50)
+creditsTabButton.TextColor3 = Color3.fromRGB(255, 200, 200)
 creditsTabButton.Font = Enum.Font.GothamSemibold
-creditsTabButton.TextSize = 22
+creditsTabButton.TextSize = 20
 local creditsTabCorner = Instance.new("UICorner")
-creditsTabCorner.CornerRadius = UDim.new(0, 14)
+creditsTabCorner.CornerRadius = UDim.new(0, 12)
 creditsTabCorner.Parent = creditsTabButton
 creditsTabButton.Parent = tabFrame
 
@@ -235,93 +240,93 @@ creditsContent.Visible = false
 creditsContent.Parent = contentFrame
 
 local fullBrightToggle = Instance.new("TextButton")
-fullBrightToggle.Size = UDim2.new(1, -20, 0, 70)
+fullBrightToggle.Size = UDim2.new(1, -20, 0, 60)
 fullBrightToggle.Position = UDim2.new(0, 10, 0, 10)
 fullBrightToggle.Text = "Full Bright: OFF"
-fullBrightToggle.BackgroundColor3 = Color3.fromRGB(25, 25, 45)
+fullBrightToggle.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
 fullBrightToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 fullBrightToggle.Font = Enum.Font.Gotham
 fullBrightToggle.TextSize = 20
 local fbCorner = Instance.new("UICorner")
-fbCorner.CornerRadius = UDim.new(0, 14)
+fbCorner.CornerRadius = UDim.new(0, 12)
 fbCorner.Parent = fullBrightToggle
 fullBrightToggle.Parent = cheatsContent
 
 local speedBoostToggle = Instance.new("TextButton")
-speedBoostToggle.Size = UDim2.new(1, -20, 0, 70)
-speedBoostToggle.Position = UDim2.new(0, 10, 0, 90)
+speedBoostToggle.Size = UDim2.new(1, -20, 0, 60)
+speedBoostToggle.Position = UDim2.new(0, 10, 0, 80)
 speedBoostToggle.Text = "Speed Boost: OFF"
-speedBoostToggle.BackgroundColor3 = Color3.fromRGB(25, 25, 45)
+speedBoostToggle.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
 speedBoostToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 speedBoostToggle.Font = Enum.Font.Gotham
 speedBoostToggle.TextSize = 20
 local sbCorner = Instance.new("UICorner")
-sbCorner.CornerRadius = UDim.new(0, 14)
+sbCorner.CornerRadius = UDim.new(0, 12)
 sbCorner.Parent = speedBoostToggle
 speedBoostToggle.Parent = cheatsContent
 
 local noClipToggle = Instance.new("TextButton")
-noClipToggle.Size = UDim2.new(1, -20, 0, 70)
-noClipToggle.Position = UDim2.new(0, 10, 0, 170)
+noClipToggle.Size = UDim2.new(1, -20, 0, 60)
+noClipToggle.Position = UDim2.new(0, 10, 0, 150)
 noClipToggle.Text = "NoClip: OFF"
-noClipToggle.BackgroundColor3 = Color3.fromRGB(25, 25, 45)
+noClipToggle.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
 noClipToggle.TextColor3 = Color3.fromRGB(255, 255, 255)
 noClipToggle.Font = Enum.Font.Gotham
 noClipToggle.TextSize = 20
 local ncCorner = Instance.new("UICorner")
-ncCorner.CornerRadius = UDim.new(0, 14)
+ncCorner.CornerRadius = UDim.new(0, 12)
 ncCorner.Parent = noClipToggle
 noClipToggle.Parent = cheatsContent
 
 local randomSpinButton = Instance.new("TextButton")
-randomSpinButton.Size = UDim2.new(1, -20, 0, 70)
-randomSpinButton.Position = UDim2.new(0, 10, 0, 250)
+randomSpinButton.Size = UDim2.new(1, -20, 0, 60)
+randomSpinButton.Position = UDim2.new(0, 10, 0, 220)
 randomSpinButton.Text = "Random Spin"
-randomSpinButton.BackgroundColor3 = Color3.fromRGB(25, 25, 45)
+randomSpinButton.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
 randomSpinButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 randomSpinButton.Font = Enum.Font.Gotham
 randomSpinButton.TextSize = 20
 local rsCorner = Instance.new("UICorner")
-rsCorner.CornerRadius = UDim.new(0, 14)
+rsCorner.CornerRadius = UDim.new(0, 12)
 rsCorner.Parent = randomSpinButton
 randomSpinButton.Parent = cheatsContent
 
 local fakeMonsterSpawnButton = Instance.new("TextButton")
-fakeMonsterSpawnButton.Size = UDim2.new(1, -20, 0, 70)
-fakeMonsterSpawnButton.Position = UDim2.new(0, 10, 0, 330)
+fakeMonsterSpawnButton.Size = UDim2.new(1, -20, 0, 60)
+fakeMonsterSpawnButton.Position = UDim2.new(0, 10, 0, 290)
 fakeMonsterSpawnButton.Text = "Fake Monster Spawn"
 fakeMonsterSpawnButton.BackgroundColor3 = Color3.fromRGB(50, 20, 20)
 fakeMonsterSpawnButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 fakeMonsterSpawnButton.Font = Enum.Font.GothamBold
 fakeMonsterSpawnButton.TextSize = 20
 local fmCorner = Instance.new("UICorner")
-fmCorner.CornerRadius = UDim.new(0, 14)
+fmCorner.CornerRadius = UDim.new(0, 12)
 fmCorner.Parent = fakeMonsterSpawnButton
 fakeMonsterSpawnButton.Parent = cheatsContent
 
 local savePositionButton = Instance.new("TextButton")
-savePositionButton.Size = UDim2.new(1, -20, 0, 70)
+savePositionButton.Size = UDim2.new(1, -20, 0, 60)
 savePositionButton.Position = UDim2.new(0, 10, 0, 10)
 savePositionButton.Text = "Save Position"
-savePositionButton.BackgroundColor3 = Color3.fromRGB(25, 25, 45)
+savePositionButton.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
 savePositionButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 savePositionButton.Font = Enum.Font.Gotham
 savePositionButton.TextSize = 20
 local spCorner = Instance.new("UICorner")
-spCorner.CornerRadius = UDim.new(0, 14)
+spCorner.CornerRadius = UDim.new(0, 12)
 spCorner.Parent = savePositionButton
 savePositionButton.Parent = teleportContent
 
 local teleportToSavedButton = Instance.new("TextButton")
-teleportToSavedButton.Size = UDim2.new(1, -20, 0, 70)
-teleportToSavedButton.Position = UDim2.new(0, 10, 0, 90)
+teleportToSavedButton.Size = UDim2.new(1, -20, 0, 60)
+teleportToSavedButton.Position = UDim2.new(0, 10, 0, 80)
 teleportToSavedButton.Text = "Teleport to Saved"
-teleportToSavedButton.BackgroundColor3 = Color3.fromRGB(25, 25, 45)
+teleportToSavedButton.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
 teleportToSavedButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 teleportToSavedButton.Font = Enum.Font.Gotham
 teleportToSavedButton.TextSize = 20
 local tsCorner = Instance.new("UICorner")
-tsCorner.CornerRadius = UDim.new(0, 14)
+tsCorner.CornerRadius = UDim.new(0, 12)
 tsCorner.Parent = teleportToSavedButton
 teleportToSavedButton.Parent = teleportContent
 
@@ -330,7 +335,7 @@ creditsLabel1.Size = UDim2.new(1, -20, 0, 50)
 creditsLabel1.Position = UDim2.new(0, 10, 0, 20)
 creditsLabel1.BackgroundTransparency = 1
 creditsLabel1.Text = "Created by VertiGhost"
-creditsLabel1.TextColor3 = Color3.fromRGB(240, 240, 255)
+creditsLabel1.TextColor3 = Color3.fromRGB(255, 200, 200)
 creditsLabel1.Font = Enum.Font.Gotham
 creditsLabel1.TextSize = 18
 creditsLabel1.Parent = creditsContent
@@ -340,7 +345,7 @@ creditsLabel2.Size = UDim2.new(1, -20, 0, 50)
 creditsLabel2.Position = UDim2.new(0, 10, 0, 80)
 creditsLabel2.BackgroundTransparency = 1
 creditsLabel2.Text = "Version: 1.0 - 04/02/2025"
-creditsLabel2.TextColor3 = Color3.fromRGB(240, 240, 255)
+creditsLabel2.TextColor3 = Color3.fromRGB(255, 200, 200)
 creditsLabel2.Font = Enum.Font.Gotham
 creditsLabel2.TextSize = 18
 creditsLabel2.Parent = creditsContent
@@ -350,23 +355,22 @@ creditsLabel3.Size = UDim2.new(1, -20, 0, 50)
 creditsLabel3.Position = UDim2.new(0, 10, 0, 140)
 creditsLabel3.BackgroundTransparency = 1
 creditsLabel3.Text = "For Horror Mansion"
-creditsLabel3.TextColor3 = Color3.fromRGB(240, 240, 255)
+creditsLabel3.TextColor3 = Color3.fromRGB(255, 200, 200)
 creditsLabel3.Font = Enum.Font.Gotham
 creditsLabel3.TextSize = 18
 creditsLabel3.Parent = creditsContent
 
--- Animations améliorées pour les boutons
 local function createHoverAnimation(button)
     button.MouseEnter:Connect(function()
-        TweenService:Create(button, TweenInfo.new(0.3, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {
-            BackgroundColor3 = Color3.fromRGB(60, 60, 90),
-            Size = button.Size + UDim2.new(0, 10, 0, 10)
+        TweenService:Create(button, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {
+            BackgroundColor3 = Color3.fromRGB(70, 70, 100),
+            Size = UDim2.new(button.Size.X.Scale, button.Size.X.Offset + 10, button.Size.Y.Scale, button.Size.Y.Offset + 8)
         }):Play()
     end)
     button.MouseLeave:Connect(function()
-        TweenService:Create(button, TweenInfo.new(0.3, Enum.EasingStyle.Sine, Enum.EasingDirection.In), {
-            BackgroundColor3 = button == fakeMonsterSpawnButton and Color3.fromRGB(50, 20, 20) or (button == cheatsTabButton and Color3.fromRGB(25, 25, 45) or Color3.fromRGB(15, 15, 35)),
-            Size = button.Size - UDim2.new(0, 10, 0, 10)
+        TweenService:Create(button, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {
+            BackgroundColor3 = button == fakeMonsterSpawnButton and Color3.fromRGB(50, 20, 20) or (button == cheatsTabButton and Color3.fromRGB(30, 30, 60) or Color3.fromRGB(20, 20, 50)),
+            Size = UDim2.new(button.Size.X.Scale, button.Size.X.Offset - 10, button.Size.Y.Scale, button.Size.Y.Offset - 8)
         }):Play()
     end)
 end
@@ -385,38 +389,36 @@ createHoverAnimation(minimizeButton)
 createHoverAnimation(closeButton)
 createHoverAnimation(restoreButton)
 
--- Gestion des onglets
 cheatsTabButton.MouseButton1Click:Connect(function()
-    TweenService:Create(cheatsContent, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 0)}):Play()
+    TweenService:Create(cheatsContent, TweenInfo.new(0.4, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 0)}):Play()
     cheatsContent.Visible = true
     teleportContent.Visible = false
     creditsContent.Visible = false
-    cheatsTabButton.BackgroundColor3 = Color3.fromRGB(25, 25, 45)
-    teleportTabButton.BackgroundColor3 = Color3.fromRGB(15, 15, 35)
-    creditsTabButton.BackgroundColor3 = Color3.fromRGB(15, 15, 35)
+    cheatsTabButton.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
+    teleportTabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 50)
+    creditsTabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 50)
 end)
 
 teleportTabButton.MouseButton1Click:Connect(function()
-    TweenService:Create(teleportContent, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 0)}):Play()
+    TweenService:Create(teleportContent, TweenInfo.new(0.4, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 0)}):Play()
     cheatsContent.Visible = false
     teleportContent.Visible = true
     creditsContent.Visible = false
-    cheatsTabButton.BackgroundColor3 = Color3.fromRGB(15, 15, 35)
-    teleportTabButton.BackgroundColor3 = Color3.fromRGB(25, 25, 45)
-    creditsTabButton.BackgroundColor3 = Color3.fromRGB(15, 15, 35)
+    cheatsTabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 50)
+    teleportTabButton.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
+    creditsTabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 50)
 end)
 
 creditsTabButton.MouseButton1Click:Connect(function()
-    TweenService:Create(creditsContent, TweenInfo.new(0.3, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 0)}):Play()
+    TweenService:Create(creditsContent, TweenInfo.new(0.4, Enum.EasingStyle.Sine, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 0)}):Play()
     cheatsContent.Visible = false
     teleportContent.Visible = false
     creditsContent.Visible = true
-    cheatsTabButton.BackgroundColor3 = Color3.fromRGB(15, 15, 35)
-    teleportTabButton.BackgroundColor3 = Color3.fromRGB(15, 15, 35)
-    creditsTabButton.BackgroundColor3 = Color3.fromRGB(25, 25, 45)
+    cheatsTabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 50)
+    teleportTabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 50)
+    creditsTabButton.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
 end)
 
--- Fonctionnalités
 fullBrightToggle.MouseButton1Click:Connect(function()
     local state = not (Lighting.Ambient == Color3.new(1, 1, 1))
     if state then
@@ -489,133 +491,132 @@ randomSpinButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- Fake Monster Spawn amélioré
 fakeMonsterSpawnButton.MouseButton1Click:Connect(function()
     if not monsterActive and RootPart then
         monsterActive = true
         fakeMonsterSpawnButton.Text = "Spawning..."
         local spawnPosition = RootPart.Position + (RootPart.CFrame.LookVector * 5)
 
-        -- Tentative de synchronisation avec un RemoteEvent fictif
-        local monsterEvent = Instance.new("RemoteEvent")
-        monsterEvent.Name = "FakeMonsterSpawnEvent"
-        monsterEvent.Parent = ReplicatedStorage
+        local monster = Instance.new("Model")
+        monster.Name = "FakeMonster"
 
-        local function spawnMonster(position)
-            local monster = Instance.new("Model")
-            monster.Name = "FakeMonster"
+        local body = Instance.new("Part")
+        body.Size = Vector3.new(2.5, 6, 2)
+        body.Anchored = false
+        body.CanCollide = true
+        body.Color = Color3.fromRGB(15, 15, 15)
+        body.Material = Enum.Material.CorrodedMetal
+        body.Position = spawnPosition + Vector3.new(0, 3, 0)
+        body.Parent = monster
 
-            -- Corps plus détaillé
-            local body = Instance.new("Part")
-            body.Size = Vector3.new(2.5, 6.5, 1.8)
-            body.Anchored = false
-            body.CanCollide = true
-            body.Color = Color3.fromRGB(10, 10, 10)
-            body.Material = Enum.Material.CorrodedMetal
-            body.Position = position + Vector3.new(0, 3.25, 0)
-            body.Parent = monster
+        local leftArm = Instance.new("Part")
+        leftArm.Size = Vector3.new(0.8, 3.5, 0.8)
+        leftArm.Anchored = false
+        leftArm.CanCollide = true
+        leftArm.Color = Color3.fromRGB(15, 15, 15)
+        leftArm.Material = Enum.Material.CorrodedMetal
+        leftArm.Position = spawnPosition + Vector3.new(-1.5, 4.5, 0)
+        leftArm.Parent = monster
 
-            -- Bras gauche
-            local leftArm = Instance.new("Part")
-            leftArm.Size = Vector3.new(1, 3, 1)
-            leftArm.Anchored = false
-            leftArm.CanCollide = true
-            leftArm.Color = Color3.fromRGB(10, 10, 10)
-            leftArm.Material = Enum.Material.CorrodedMetal
-            leftArm.Position = position + Vector3.new(-1.5, 4.5, 0)
-            leftArm.Parent = monster
+        local rightArm = Instance.new("Part")
+        rightArm.Size = Vector3.new(0.8, 3.5, 0.8)
+        rightArm.Anchored = false
+        rightArm.CanCollide = true
+        rightArm.Color = Color3.fromRGB(15, 15, 15)
+        rightArm.Material = Enum.Material.CorrodedMetal
+        rightArm.Position = spawnPosition + Vector3.new(1.5, 4.5, 0)
+        rightArm.Parent = monster
 
-            -- Bras droit
-            local rightArm = Instance.new("Part")
-            rightArm.Size = Vector3.new(1, 3, 1)
-            rightArm.Anchored = false
-            rightArm.CanCollide = true
-            rightArm.Color = Color3.fromRGB(10, 10, 10)
-            rightArm.Material = Enum.Material.CorrodedMetal
-            rightArm.Position = position + Vector3.new(1.5, 4.5, 0)
-            rightArm.Parent = monster
+        local leftLeg = Instance.new("Part")
+        leftLeg.Size = Vector3.new(0.9, 3, 0.9)
+        leftLeg.Anchored = false
+        leftLeg.CanCollide = true
+        leftLeg.Color = Color3.fromRGB(15, 15, 15)
+        leftLeg.Material = Enum.Material.CorrodedMetal
+        leftLeg.Position = spawnPosition + Vector3.new(-0.7, 1.5, 0)
+        leftLeg.Parent = monster
 
-            -- Tête avec détails
-            local head = Instance.new("Part")
-            head.Size = Vector3.new(1.5, 1.5, 1.5)
-            head.Anchored = false
-            head.CanCollide = true
-            head.Color = Color3.fromRGB(10, 10, 10)
-            head.Material = Enum.Material.CorrodedMetal
-            head.Position = position + Vector3.new(0, 6.5, 0)
-            head.Parent = monster
+        local rightLeg = Instance.new("Part")
+        rightLeg.Size = Vector3.new(0.9, 3, 0.9)
+        rightLeg.Anchored = false
+        rightLeg.CanCollide = true
+        rightLeg.Color = Color3.fromRGB(15, 15, 15)
+        rightLeg.Material = Enum.Material.CorrodedMetal
+        rightLeg.Position = spawnPosition + Vector3.new(0.7, 1.5, 0)
+        rightLeg.Parent = monster
 
-            -- Yeux rouges réalistes
-            local leftEye = Instance.new("Part")
-            leftEye.Size = Vector3.new(0.3, 0.3, 0.3)
-            leftEye.Anchored = false
-            leftEye.CanCollide = false
-            leftEye.Color = Color3.fromRGB(255, 0, 0)
-            leftEye.Material = Enum.Material.Neon
-            leftEye.Position = position + Vector3.new(-0.3, 6.5, 0.6)
-            leftEye.Parent = monster
+        local head = Instance.new("Part")
+        head.Size = Vector3.new(1.6, 1.6, 1.6)
+        head.Anchored = false
+        head.CanCollide = true
+        head.Color = Color3.fromRGB(15, 15, 15)
+        head.Material = Enum.Material.CorrodedMetal
+        head.Position = spawnPosition + Vector3.new(0, 6.5, 0)
+        head.Parent = monster
 
-            local rightEye = Instance.new("Part")
-            rightEye.Size = Vector3.new(0.3, 0.3, 0.3)
-            rightEye.Anchored = false
-            rightEye.CanCollide = false
-            rightEye.Color = Color3.fromRGB(255, 0, 0)
-            rightEye.Material = Enum.Material.Neon
-            rightEye.Position = position + Vector3.new(0.3, 6.5, 0.6)
-            rightEye.Parent = monster
+        local leftEye = Instance.new("Part")
+        leftEye.Size = Vector3.new(0.4, 0.4, 0.4)
+        leftEye.Anchored = false
+        leftEye.CanCollide = false
+        leftEye.Color = Color3.fromRGB(255, 0, 0)
+        leftEye.Material = Enum.Material.Neon
+        leftEye.Position = spawnPosition + Vector3.new(-0.4, 6.5, 0.6)
+        leftEye.Parent = monster
 
-            -- Aura lumineuse
-            local aura = Instance.new("PointLight")
-            aura.Color = Color3.fromRGB(255, 0, 0)
-            aura.Brightness = 2.5
-            aura.Range = 12
-            aura.Parent = head
+        local rightEye = Instance.new("Part")
+        rightEye.Size = Vector3.new(0.4, 0.4, 0.4)
+        rightEye.Anchored = false
+        rightEye.CanCollide = false
+        rightEye.Color = Color3.fromRGB(255, 0, 0)
+        rightEye.Material = Enum.Material.Neon
+        rightEye.Position = spawnPosition + Vector3.new(0.4, 6.5, 0.6)
+        rightEye.Parent = monster
 
-            -- Son effrayant
-            local sound = Instance.new("Sound")
-            sound.SoundId = "rbxassetid://9119707206"
-            sound.Volume = 2
-            sound.Pitch = 0.9
-            sound.Parent = body
-            sound:Play()
+        local aura = Instance.new("PointLight")
+        aura.Color = Color3.fromRGB(255, 0, 0)
+        aura.Brightness = 3
+        aura.Range = 14
+        aura.Parent = head
 
-            -- Animation de marche
-            local humanoid = Instance.new("Humanoid")
-            humanoid.WalkSpeed = 14
-            humanoid.Parent = monster
-            monster.PrimaryPart = body
-            monster.Parent = Workspace
+        local sound = Instance.new("Sound")
+        sound.SoundId = "rbxassetid://9119707206"
+        sound.Volume = 2.5
+        sound.Pitch = 0.85
+        sound.Parent = body
+        sound:Play()
 
-            -- Comportement réaliste
-            spawn(function()
-                for i = 1, 6 do
-                    humanoid:MoveTo(position + Vector3.new(math.random(-12, 12), 0, math.random(-12, 12)))
-                    wait(1)
-                end
-                local fadeTween = TweenService:Create(body, TweenInfo.new(0.7), {Transparency = 1})
-                local leftArmFade = TweenService:Create(leftArm, TweenInfo.new(0.7), {Transparency = 1})
-                local rightArmFade = TweenService:Create(rightArm, TweenInfo.new(0.7), {Transparency = 1})
-                local headFade = TweenService:Create(head, TweenInfo.new(0.7), {Transparency = 1})
-                local leftEyeFade = TweenService:Create(leftEye, TweenInfo.new(0.7), {Transparency = 1})
-                local rightEyeFade = TweenService:Create(rightEye, TweenInfo.new(0.7), {Transparency = 1})
-                fadeTween:Play()
-                leftArmFade:Play()
-                rightArmFade:Play()
-                headFade:Play()
-                leftEyeFade:Play()
-                rightEyeFade:Play()
-                wait(0.7)
-                monster:Destroy()
-            end)
-        end
+        local humanoid = Instance.new("Humanoid")
+        humanoid.WalkSpeed = 16
+        humanoid.Parent = monster
+        monster.PrimaryPart = body
+        monster.Parent = Workspace
 
-        -- Tentative de rendre visible pour tous
-        monsterEvent:FireServer(spawnPosition)
-        spawnMonster(spawnPosition)
-
-        wait(7)
-        monsterActive = false
-        fakeMonsterSpawnButton.Text = "Fake Monster Spawn"
+        spawn(function()
+            for i = 1, 6 do
+                humanoid:MoveTo(spawnPosition + Vector3.new(math.random(-15, 15), 0, math.random(-15, 15)))
+                wait(1)
+            end
+            local fadeTween = TweenService:Create(body, TweenInfo.new(0.8), {Transparency = 1})
+            local leftArmFade = TweenService:Create(leftArm, TweenInfo.new(0.8), {Transparency = 1})
+            local rightArmFade = TweenService:Create(rightArm, TweenInfo.new(0.8), {Transparency = 1})
+            local leftLegFade = TweenService:Create(leftLeg, TweenInfo.new(0.8), {Transparency = 1})
+            local rightLegFade = TweenService:Create(rightLeg, TweenInfo.new(0.8), {Transparency = 1})
+            local headFade = TweenService:Create(head, TweenInfo.new(0.8), {Transparency = 1})
+            local leftEyeFade = TweenService:Create(leftEye, TweenInfo.new(0.8), {Transparency = 1})
+            local rightEyeFade = TweenService:Create(rightEye, TweenInfo.new(0.8), {Transparency = 1})
+            fadeTween:Play()
+            leftArmFade:Play()
+            rightArmFade:Play()
+            leftLegFade:Play()
+            rightLegFade:Play()
+            headFade:Play()
+            leftEyeFade:Play()
+            rightEyeFade:Play()
+            wait(0.8)
+            monster:Destroy()
+            monsterActive = false
+            fakeMonsterSpawnButton.Text = "Fake Monster Spawn"
+        end)
     end
 end)
 
@@ -629,27 +630,32 @@ teleportToSavedButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- Animations du GUI
 minimizeButton.MouseButton1Click:Connect(function()
-    TweenService:Create(mainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1}):Play()
-    wait(0.4)
-    mainFrame.Visible = false
-    restoreButton.Visible = true
-    TweenService:Create(restoreButton, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.In), {BackgroundTransparency = 0, Size = UDim2.new(0, 90, 0, 90)}):Play()
+    local tween = TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1})
+    tween:Play()
+    tween.Completed:Connect(function()
+        mainFrame.Visible = false
+        restoreButton.Visible = true
+        TweenService:Create(restoreButton, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {BackgroundTransparency = 0, Size = UDim2.new(0, 80, 0, 80)}):Play()
+    end)
 end)
 
 restoreButton.MouseButton1Click:Connect(function()
-    TweenService:Create(restoreButton, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {BackgroundTransparency = 1, Size = UDim2.new(0, 0, 0, 0)}):Play()
-    wait(0.4)
-    restoreButton.Visible = false
-    mainFrame.Visible = true
-    TweenService:Create(mainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.In), {Size = UDim2.new(0, 500, 0, 620), BackgroundTransparency = 0}):Play()
+    local tween = TweenService:Create(restoreButton, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {BackgroundTransparency = 1, Size = UDim2.new(0, 0, 0, 0)})
+    tween:Play()
+    tween.Completed:Connect(function()
+        restoreButton.Visible = false
+        mainFrame.Visible = true
+        TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.In), {Size = UDim2.new(0, 450, 0, 600), BackgroundTransparency = 0}):Play()
+    end)
 end)
 
 closeButton.MouseButton1Click:Connect(function()
-    TweenService:Create(mainFrame, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1}):Play()
-    wait(0.4)
-    screenGui:Destroy()
+    local tween = TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1})
+    tween:Play()
+    tween.Completed:Connect(function()
+        screenGui:Destroy()
+    end)
 end)
 
 local dragging
@@ -662,7 +668,7 @@ local function update(input)
     mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
 end
 
-topBar.InputBegan:Connect(function(input)
+titleBar.InputBegan:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
         dragging = true
         dragStart = input.Position
@@ -675,7 +681,7 @@ topBar.InputBegan:Connect(function(input)
     end
 end)
 
-topBar.InputChanged:Connect(function(input)
+titleBar.InputChanged:Connect(function(input)
     if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
         dragInput = input
     end
@@ -687,8 +693,7 @@ UserInputService.InputChanged:Connect(function(input)
     end
 end)
 
--- Animation d'ouverture
 mainFrame.Size = UDim2.new(0, 0, 0, 0)
 mainFrame.BackgroundTransparency = 1
 mainFrame.Visible = true
-TweenService:Create(mainFrame, TweenInfo.new(0.5, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Size = UDim2.new(0, 500, 0, 620), BackgroundTransparency = 0}):Play()
+TweenService:Create(mainFrame, TweenInfo.new(0.6, Enum.EasingStyle.Quad, Enum.EasingDirection.Out), {Size = UDim2.new(0, 450, 0, 600), BackgroundTransparency = 0}):Play()
