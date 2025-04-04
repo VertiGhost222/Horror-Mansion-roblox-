@@ -73,6 +73,7 @@ glow.Size = UDim2.new(1, 80, 1, 80)
 glow.Position = UDim2.new(0, -40, 0, -40)
 glow.ZIndex = -1
 glow.Parent = mainFrame
+
 local particleEmitter = Instance.new("ParticleEmitter")
 particleEmitter.Texture = "rbxassetid://243660947"
 particleEmitter.Lifetime = NumberRange.new(0.5, 1)
@@ -83,6 +84,7 @@ particleEmitter.Color = ColorSequence.new(Color3.fromRGB(200, 100, 100))
 particleEmitter.Size = NumberSequence.new(0.2)
 particleEmitter.Transparency = NumberSequence.new({NumberSequenceKeypoint.new(0, 0.8), NumberSequenceKeypoint.new(1, 1)})
 particleEmitter.Parent = mainFrame
+
 local ambientLight = Instance.new("PointLight")
 ambientLight.Color = Color3.fromRGB(200, 100, 100)
 ambientLight.Brightness = 0.5
@@ -117,8 +119,8 @@ titleGlow.Parent = titleBar
 titleBar.Parent = mainFrame
 
 local titleLabel = Instance.new("TextLabel")
-titleLabel.Size = UDim2.new(0.6, 0, 0.8, 0)
-titleLabel.Position = UDim2.new(0, 20, 0.1, 0)
+titleLabel.Size = UDim2.new(0.6, 0, 0, 50)
+titleLabel.Position = UDim2.new(0, 20, 0, 10)
 titleLabel.BackgroundTransparency = 1
 titleLabel.Text = "Horror Mansion Hacks"
 titleLabel.TextColor3 = Color3.fromRGB(255, 200, 200)
@@ -228,9 +230,22 @@ teleportTabCorner.CornerRadius = UDim.new(0, 12)
 teleportTabCorner.Parent = teleportTabButton
 teleportTabButton.Parent = tabFrame
 
+local othersTabButton = Instance.new("TextButton")
+othersTabButton.Size = UDim2.new(1, -10, 0, 60)
+othersTabButton.Position = UDim2.new(0, 5, 0, 150)
+othersTabButton.Text = "Others"
+othersTabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 50)
+othersTabButton.TextColor3 = Color3.fromRGB(255, 200, 200)
+othersTabButton.Font = Enum.Font.GothamSemibold
+othersTabButton.TextSize = 20
+local othersTabCorner = Instance.new("UICorner")
+othersTabCorner.CornerRadius = UDim.new(0, 12)
+othersTabCorner.Parent = othersTabButton
+othersTabButton.Parent = tabFrame
+
 local creditsTabButton = Instance.new("TextButton")
 creditsTabButton.Size = UDim2.new(1, -10, 0, 60)
-creditsTabButton.Position = UDim2.new(0, 5, 0, 150)
+creditsTabButton.Position = UDim2.new(0, 5, 0, 220)
 creditsTabButton.Text = "Credits"
 creditsTabButton.BackgroundColor3 = Color3.fromRGB(20, 20, 50)
 creditsTabButton.TextColor3 = Color3.fromRGB(255, 200, 200)
@@ -251,6 +266,12 @@ teleportContent.Size = UDim2.new(1, 0, 1, 0)
 teleportContent.BackgroundTransparency = 1
 teleportContent.Visible = false
 teleportContent.Parent = contentFrame
+
+local othersContent = Instance.new("Frame")
+othersContent.Size = UDim2.new(1, 0, 1, 0)
+othersContent.BackgroundTransparency = 1
+othersContent.Visible = false
+othersContent.Parent = contentFrame
 
 local creditsContent = Instance.new("Frame")
 creditsContent.Size = UDim2.new(1, 0, 1, 0)
@@ -312,7 +333,7 @@ randomSpinButton.Parent = cheatsContent
 
 local fakeMonsterSpawnButton = Instance.new("TextButton")
 fakeMonsterSpawnButton.Size = UDim2.new(1, -20, 0, 60)
-fakeMonsterSpawnButton.Position = UDim2.new(0, 10, 0, 290)
+fakeMonsterSpawnButton.Position = UDim2.new(0, 10, 0, 10)
 fakeMonsterSpawnButton.Text = "Fake Monster Spawn"
 fakeMonsterSpawnButton.BackgroundColor3 = Color3.fromRGB(50, 20, 20)
 fakeMonsterSpawnButton.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -321,7 +342,7 @@ fakeMonsterSpawnButton.TextSize = 20
 local fmCorner = Instance.new("UICorner")
 fmCorner.CornerRadius = UDim.new(0, 12)
 fmCorner.Parent = fakeMonsterSpawnButton
-fakeMonsterSpawnButton.Parent = cheatsContent
+fakeMonsterSpawnButton.Parent = othersContent
 
 local savePositionButton = Instance.new("TextButton")
 savePositionButton.Size = UDim2.new(1, -20, 0, 60)
@@ -344,9 +365,9 @@ teleportToSavedButton.BackgroundColor3 = Color3.fromRGB(30, 30, 60)
 teleportToSavedButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 teleportToSavedButton.Font = Enum.Font.Gotham
 teleportToSavedButton.TextSize = 20
-local tsCorner = Instance.new("UICorner")
-tsCorner.CornerRadius = UDim.new(0, 12)
-tsCorner.Parent = teleportToSavedButton
+local tsCornerTeleport = Instance.new("UICorner")
+tsCornerTeleport.CornerRadius = UDim.new(0, 12)
+tsCornerTeleport.Parent = teleportToSavedButton
 teleportToSavedButton.Parent = teleportContent
 
 local creditsLabel1 = Instance.new("TextLabel")
@@ -407,6 +428,7 @@ end
 
 createHoverAnimation(cheatsTabButton)
 createHoverAnimation(teleportTabButton)
+createHoverAnimation(othersTabButton)
 createHoverAnimation(creditsTabButton)
 createHoverAnimation(fullBrightToggle)
 createHoverAnimation(speedBoostToggle)
@@ -426,15 +448,18 @@ local function createTabTransition(content)
         TweenService:Create(content, TweenInfo.new(0.4, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {Position = UDim2.new(0, 0, 0, 0)}):Play()
         cheatsContent.Visible = (content == cheatsContent)
         teleportContent.Visible = (content == teleportContent)
+        othersContent.Visible = (content == othersContent)
         creditsContent.Visible = (content == creditsContent)
         cheatsTabButton.BackgroundColor3 = (content == cheatsContent) and Color3.fromRGB(30, 30, 60) or Color3.fromRGB(20, 20, 50)
         teleportTabButton.BackgroundColor3 = (content == teleportContent) and Color3.fromRGB(30, 30, 60) or Color3.fromRGB(20, 20, 50)
+        othersTabButton.BackgroundColor3 = (content == othersContent) and Color3.fromRGB(30, 30, 60) or Color3.fromRGB(20, 20, 50)
         creditsTabButton.BackgroundColor3 = (content == creditsContent) and Color3.fromRGB(30, 30, 60) or Color3.fromRGB(20, 20, 50)
     end
 end
 
 cheatsTabButton.MouseButton1Click:Connect(createTabTransition(cheatsContent))
 teleportTabButton.MouseButton1Click:Connect(createTabTransition(teleportContent))
+othersTabButton.MouseButton1Click:Connect(createTabTransition(othersContent))
 creditsTabButton.MouseButton1Click:Connect(createTabTransition(creditsContent))
 
 fullBrightToggle.MouseButton1Click:Connect(function()
@@ -513,125 +538,154 @@ fakeMonsterSpawnButton.MouseButton1Click:Connect(function()
     if not monsterActive and RootPart then
         monsterActive = true
         fakeMonsterSpawnButton.Text = "Spawning..."
-        local spawnPosition = RootPart.Position + (RootPart.CFrame.LookVector * 5)
+        local spawnPosition = RootPart.Position + (RootPart.CFrame.LookVector * 5) + Vector3.new(0, 1.5, 0)
         local monster = Instance.new("Model")
         monster.Name = "FakeMonster"
+
         local body = Instance.new("Part")
-        body.Size = Vector3.new(2.5, 6, 2)
-        body.Anchored = false
-        body.CanCollide = true
-        body.Color = Color3.fromRGB(15, 15, 15)
-        body.Material = Enum.Material.CorrodedMetal
-        body.Position = spawnPosition + Vector3.new(0, 3, 0)
+        body.Size = Vector3.new(3, 2, 5)
+        body.Color = Color3.fromRGB(50, 30, 20)
+        body.Material = Enum.Material.Fabric
+        body.Position = spawnPosition
         body.Parent = monster
-        local leftArm = Instance.new("Part")
-        leftArm.Size = Vector3.new(0.8, 3.5, 0.8)
-        leftArm.Anchored = false
-        leftArm.CanCollide = true
-        leftArm.Color = Color3.fromRGB(15, 15, 15)
-        leftArm.Material = Enum.Material.CorrodedMetal
-        leftArm.Position = spawnPosition + Vector3.new(-1.5, 4.5, 0)
-        leftArm.Parent = monster
-        local rightArm = Instance.new("Part")
-        rightArm.Size = Vector3.new(0.8, 3.5, 0.8)
-        rightArm.Anchored = false
-        rightArm.CanCollide = true
-        rightArm.Color = Color3.fromRGB(15, 15, 15)
-        rightArm.Material = Enum.Material.CorrodedMetal
-        rightArm.Position = spawnPosition + Vector3.new(1.5, 4.5, 0)
-        rightArm.Parent = monster
-        local leftLeg = Instance.new("Part")
-        leftLeg.Size = Vector3.new(0.9, 3, 0.9)
-        leftLeg.Anchored = false
-        leftLeg.CanCollide = true
-        leftLeg.Color = Color3.fromRGB(15, 15, 15)
-        leftLeg.Material = Enum.Material.CorrodedMetal
-        leftLeg.Position = spawnPosition + Vector3.new(-0.7, 1.5, 0)
-        leftLeg.Parent = monster
-        local rightLeg = Instance.new("Part")
-        rightLeg.Size = Vector3.new(0.9, 3, 0.9)
-        rightLeg.Anchored = false
-        rightLeg.CanCollide = true
-        rightLeg.Color = Color3.fromRGB(15, 15, 15)
-        rightLeg.Material = Enum.Material.CorrodedMetal
-        rightLeg.Position = spawnPosition + Vector3.new(0.7, 1.5, 0)
-        rightLeg.Parent = monster
+
         local head = Instance.new("Part")
-        head.Size = Vector3.new(1.6, 1.6, 1.6)
-        head.Anchored = false
-        head.CanCollide = true
-        head.Color = Color3.fromRGB(15, 15, 15)
-        head.Material = Enum.Material.CorrodedMetal
-        head.Position = spawnPosition + Vector3.new(0, 6.5, 0)
+        head.Size = Vector3.new(1.5, 1.2, 2)
+        head.Color = Color3.fromRGB(50, 30, 20)
+        head.Material = Enum.Material.Fabric
+        head.Position = spawnPosition + Vector3.new(0, 1.5, 2)
         head.Parent = monster
+
+        local leftEar = Instance.new("Part")
+        leftEar.Size = Vector3.new(0.5, 1, 0.3)
+        leftEar.Color = Color3.fromRGB(50, 30, 20)
+        leftEar.Material = Enum.Material.Fabric
+        leftEar.Position = spawnPosition + Vector3.new(-0.7, 2.2, 2)
+        leftEar.Parent = monster
+
+        local rightEar = Instance.new("Part")
+        rightEar.Size = Vector3.new(0.5, 1, 0.3)
+        rightEar.Color = Color3.fromRGB(50, 30, 20)
+        rightEar.Material = Enum.Material.Fabric
+        rightEar.Position = spawnPosition + Vector3.new(0.7, 2.2, 2)
+        rightEar.Parent = monster
+
         local leftEye = Instance.new("Part")
-        leftEye.Size = Vector3.new(0.4, 0.4, 0.4)
-        leftEye.Anchored = false
-        leftEye.CanCollide = false
-        leftEye.Color = Color3.fromRGB(255, 0, 0)
+        leftEye.Size = Vector3.new(0.3, 0.3, 0.3)
+        leftEye.Color = Color3.fromRGB(255, 255, 0)
         leftEye.Material = Enum.Material.Neon
-        leftEye.Position = spawnPosition + Vector3.new(-0.4, 6.5, 0.6)
+        leftEye.Position = spawnPosition + Vector3.new(-0.4, 1.5, 2.8)
         leftEye.Parent = monster
+
         local rightEye = Instance.new("Part")
-        rightEye.Size = Vector3.new(0.4, 0.4, 0.4)
-        rightEye.Anchored = false
-        rightEye.CanCollide = false
-        rightEye.Color = Color3.fromRGB(255, 0, 0)
+        rightEye.Size = Vector3.new(0.3, 0.3, 0.3)
+        rightEye.Color = Color3.fromRGB(255, 255, 0)
         rightEye.Material = Enum.Material.Neon
-        rightEye.Position = spawnPosition + Vector3.new(0.4, 6.5, 0.6)
+        rightEye.Position = spawnPosition + Vector3.new(0.4, 1.5, 2.8)
         rightEye.Parent = monster
-        local aura = Instance.new("PointLight")
-        aura.Color = Color3.fromRGB(255, 0, 0)
-        aura.Brightness = 3
-        aura.Range = 14
-        aura.Parent = head
+
+        local leftFrontLeg = Instance.new("Part")
+        leftFrontLeg.Size = Vector3.new(0.8, 2, 0.8)
+        leftFrontLeg.Color = Color3.fromRGB(50, 30, 20)
+        leftFrontLeg.Material = Enum.Material.Fabric
+        leftFrontLeg.Position = spawnPosition + Vector3.new(-1, -0.5, 1.5)
+        leftFrontLeg.Parent = monster
+
+        local rightFrontLeg = Instance.new("Part")
+        rightFrontLeg.Size = Vector3.new(0.8, 2, 0.8)
+        rightFrontLeg.Color = Color3.fromRGB(50, 30, 20)
+        rightFrontLeg.Material = Enum.Material.Fabric
+        rightFrontLeg.Position = spawnPosition + Vector3.new(1, -0.5, 1.5)
+        rightFrontLeg.Parent = monster
+
+        local leftBackLeg = Instance.new("Part")
+        leftBackLeg.Size = Vector3.new(0.8, 2, 0.8)
+        leftBackLeg.Color = Color3.fromRGB(50, 30, 20)
+        leftBackLeg.Material = Enum.Material.Fabric
+        leftBackLeg.Position = spawnPosition + Vector3.new(-1, -0.5, -1.5)
+        leftBackLeg.Parent = monster
+
+        local rightBackLeg = Instance.new("Part")
+        rightBackLeg.Size = Vector3.new(0.8, 2, 0.8)
+        rightBackLeg.Color = Color3.fromRGB(50, 30, 20)
+        rightBackLeg.Material = Enum.Material.Fabric
+        rightBackLeg.Position = spawnPosition + Vector3.new(1, -0.5, -1.5)
+        rightBackLeg.Parent = monster
+
+        local tail = Instance.new("Part")
+        tail.Size = Vector3.new(0.4, 0.4, 2)
+        tail.Color = Color3.fromRGB(50, 30, 20)
+        tail.Material = Enum.Material.Fabric
+        tail.Position = spawnPosition + Vector3.new(0, 1, -3)
+        tail.Parent = monster
+
+        local leftFang = Instance.new("Part")
+        leftFang.Size = Vector3.new(0.2, 0.5, 0.2)
+        leftFang.Color = Color3.fromRGB(255, 255, 255)
+        leftFang.Material = Enum.Material.Neon
+        leftFang.Position = spawnPosition + Vector3.new(-0.3, 1, 3)
+        leftFang.Parent = monster
+
+        local rightFang = Instance.new("Part")
+        rightFang.Size = Vector3.new(0.2, 0.5, 0.2)
+        rightFang.Color = Color3.fromRGB(255, 255, 255)
+        rightFang.Material = Enum.Material.Neon
+        rightFang.Position = spawnPosition + Vector3.new(0.3, 1, 3)
+        rightFang.Parent = monster
+
         local sound = Instance.new("Sound")
         sound.SoundId = "rbxassetid://9119707206"
-        sound.Volume = 2.5
-        sound.Pitch = 0.85
+        sound.Volume = 2
+        sound.Pitch = 0.8
         sound.Parent = body
         sound:Play()
-        local humanoid = Instance.new("Humanoid")
-        humanoid.WalkSpeed = 16
-        humanoid.Parent = monster
-        monster.PrimaryPart = body
+
         monster.Parent = Workspace
-        spawn(function()
-            for i = 1, 6 do
-                humanoid:MoveTo(spawnPosition + Vector3.new(math.random(-15, 15), 0, math.random(-15, 15)))
-                wait(1)
-            end
-            local fadeTween = TweenService:Create(body, TweenInfo.new(0.8), {Transparency = 1})
-            local leftArmFade = TweenService:Create(leftArm, TweenInfo.new(0.8), {Transparency = 1})
-            local rightArmFade = TweenService:Create(rightArm, TweenInfo.new(0.8), {Transparency = 1})
-            local leftLegFade = TweenService:Create(leftLeg, TweenInfo.new(0.8), {Transparency = 1})
-            local rightLegFade = TweenService:Create(rightLeg, TweenInfo.new(0.8), {Transparency = 1})
-            local headFade = TweenService:Create(head, TweenInfo.new(0.8), {Transparency = 1})
-            local leftEyeFade = TweenService:Create(leftEye, TweenInfo.new(0.8), {Transparency = 1})
-            local rightEyeFade = TweenService:Create(rightEye, TweenInfo.new(0.8), {Transparency = 1})
-            fadeTween:Play()
-            leftArmFade:Play()
-            rightArmFade:Play()
-            leftLegFade:Play()
-            rightLegFade:Play()
-            headFade:Play()
-            leftEyeFade:Play()
-            rightEyeFade:Play()
-            wait(0.8)
-            monster:Destroy()
-            monsterActive = false
-            fakeMonsterSpawnButton.Text = "Fake Monster Spawn"
-        end)
+        wait(5)
+        local fadeTween = TweenService:Create(body, TweenInfo.new(0.8), {Transparency = 1})
+        local headFade = TweenService:Create(head, TweenInfo.new(0.8), {Transparency = 1})
+        local leftEarFade = TweenService:Create(leftEar, TweenInfo.new(0.8), {Transparency = 1})
+        local rightEarFade = TweenService:Create(rightEar, TweenInfo.new(0.8), {Transparency = 1})
+        local leftEyeFade = TweenService:Create(leftEye, TweenInfo.new(0.8), {Transparency = 1})
+        local rightEyeFade = TweenService:Create(rightEye, TweenInfo.new(0.8), {Transparency = 1})
+        local leftFrontLegFade = TweenService:Create(leftFrontLeg, TweenInfo.new(0.8), {Transparency = 1})
+        local rightFrontLegFade = TweenService:Create(rightFrontLeg, TweenInfo.new(0.8), {Transparency = 1})
+        local leftBackLegFade = TweenService:Create(leftBackLeg, TweenInfo.new(0.8), {Transparency = 1})
+        local rightBackLegFade = TweenService:Create(rightBackLeg, TweenInfo.new(0.8), {Transparency = 1})
+        local tailFade = TweenService:Create(tail, TweenInfo.new(0.8), {Transparency = 1})
+        local leftFangFade = TweenService:Create(leftFang, TweenInfo.new(0.8), {Transparency = 1})
+        local rightFangFade = TweenService:Create(rightFang, TweenInfo.new(0.8), {Transparency = 1})
+        fadeTween:Play()
+        headFade:Play()
+        leftEarFade:Play()
+        rightEarFade:Play()
+        leftEyeFade:Play()
+        rightEyeFade:Play()
+        leftFrontLegFade:Play()
+        rightFrontLegFade:Play()
+        leftBackLegFade:Play()
+        rightBackLegFade:Play()
+        tailFade:Play()
+        leftFangFade:Play()
+        rightFangFade:Play()
+        wait(0.8)
+        monster:Destroy()
+        monsterActive = false
+        fakeMonsterSpawnButton.Text = "Fake Monster Spawn"
     end
 end)
 
 savePositionButton.MouseButton1Click:Connect(function()
-    savedPosition = RootPart.CFrame
+    if RootPart then
+        savedPosition = RootPart.CFrame
+        print("Position sauvegardée : ", RootPart.Position)
+    end
 end)
 
 teleportToSavedButton.MouseButton1Click:Connect(function()
-    if savedPosition then
+    if savedPosition and RootPart then
         RootPart.CFrame = savedPosition
+        print("Téléporté à la position sauvegardée : ", RootPart.Position)
     end
 end)
 
