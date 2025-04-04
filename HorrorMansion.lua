@@ -46,6 +46,7 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Name = "HorrorMansionHacks"
 screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 screenGui.ResetOnSpawn = false
+screenGui.IgnoreGuiInset = true
 
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 450, 0, 600)
@@ -344,6 +345,19 @@ fmCorner.CornerRadius = UDim.new(0, 12)
 fmCorner.Parent = fakeMonsterSpawnButton
 fakeMonsterSpawnButton.Parent = othersContent
 
+local infinityYieldButton = Instance.new("TextButton")
+infinityYieldButton.Size = UDim2.new(1, -20, 0, 60)
+infinityYieldButton.Position = UDim2.new(0, 10, 0, 80)
+infinityYieldButton.Text = "Infinity Yield"
+infinityYieldButton.BackgroundColor3 = Color3.fromRGB(50, 20, 20)
+infinityYieldButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+infinityYieldButton.Font = Enum.Font.GothamBold
+infinityYieldButton.TextSize = 20
+local iyCorner = Instance.new("UICorner")
+iyCorner.CornerRadius = UDim.new(0, 12)
+iyCorner.Parent = infinityYieldButton
+infinityYieldButton.Parent = othersContent
+
 local savePositionButton = Instance.new("TextButton")
 savePositionButton.Size = UDim2.new(1, -20, 0, 60)
 savePositionButton.Position = UDim2.new(0, 10, 0, 10)
@@ -435,6 +449,7 @@ createHoverAnimation(speedBoostToggle)
 createHoverAnimation(noClipToggle)
 createHoverAnimation(randomSpinButton)
 createHoverAnimation(fakeMonsterSpawnButton)
+createHoverAnimation(infinityYieldButton)
 createHoverAnimation(savePositionButton)
 createHoverAnimation(teleportToSavedButton)
 createHoverAnimation(minimizeButton)
@@ -673,6 +688,13 @@ fakeMonsterSpawnButton.MouseButton1Click:Connect(function()
         monsterActive = false
         fakeMonsterSpawnButton.Text = "Fake Monster Spawn"
     end
+end)
+
+infinityYieldButton.MouseButton1Click:Connect(function()
+    infinityYieldButton.Text = "Loading Infinity Yield..."
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
+    wait(2)
+    infinityYieldButton.Text = "Infinity Yield"
 end)
 
 savePositionButton.MouseButton1Click:Connect(function()
